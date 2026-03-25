@@ -1,0 +1,56 @@
+import datetime 
+import time
+
+
+
+presentHour= datetime.datetime.now().hour
+
+name= input ("Swagat hai , Enter your name : ")
+if 5<= presentHour <= 11:
+    print ("Good morning", name)
+if 11<= presentHour <= 17:
+    print ("Good Afternoon", name)
+if 17<= presentHour <= 20:
+    print ("Good Evening", name)
+else:
+    print("Good night", name)
+
+
+# print("Namaste duniya!")
+print("this rule based chatbot is created by ayush")
+print ("you can ask me basic question type  'BYE' to exit ")
+
+
+#chatbot memory creation { disctionary }
+responses = {
+    "hi": "Hello! How can I assist you today?",
+    "hello": "Hi there! What can I do for you?",
+    "how are you?": "I'm just a chatbot, but I'm here to help you!",
+    "what is your name?": "I am a simple rule-based chatbot created by Ayush.",
+    "what can you do?": "I can answer basic questions and have simple conversations with you.",
+    "motivate me": "Believe in yourself! You can achieve anything you set your mind to.",
+    "bye": "Goodbye! Have a great day!",
+    
+}
+
+# Method/function to get response from chatbot
+
+def getResponseBot(userQuestion):
+    userQuestion= userQuestion.lower()
+    for eachKey in responses:
+        if eachKey in userQuestion:
+            return responses[eachKey]
+    return "I am not able to give answer, I'm still learning"
+
+#take user input and respond
+while True:
+    userInput = input ("please enter your message: ")
+    reply= getResponseBot(userInput)
+    print("Bot Response", reply)
+
+
+    if "bye" in userInput.lower():
+        break
+
+
+vector datetime

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ayush Chatbot</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #1e1e2f;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .chat-header {
+            background-color: #111;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 15px;
+            max-width: 60%;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .user {
+            background-color: #10a37f;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 0;
+        }
+
+        .bot {
+            background-color: #2a2b3c;
+            color: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 0;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 10px;
+            background-color: #111;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+        }
+
+        button {
+            margin-left: 10px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            background-color: #10a37f;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0e8c6d;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <div class="chat-header">
+        🤖 Ayush Chatbot
+    </div>
+
+    <div class="chat-box" id="chatBox"></div>
+
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+</div>
+
+<script>
+
+// 🚀 Send Message
+async function sendMessage() {
+    let input = document.getElementById("userInput");
+    let message = input.value.trim();
+
+    if (message === "") return;
+
+    let chatBox = document.getElementById("chatBox");
+
+    // 👤 USER MESSAGE
+    let userMsg = document.createElement("div");
+    userMsg.className = "message user";
+    userMsg.innerText = message;
+    chatBox.appendChild(userMsg);
+
+    input.value = "";
+
+    // 🤖 BOT MESSAGE
+    let botMsg = document.createElement("div");
+    botMsg.className = "message bot";
+    botMsg.innerText = "Typing...";
+    chatBox.appendChild(botMsg);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+        let response = await fetch("http://127.0.0.1:8000/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: message })
+        });
+
+        let data = await response.json();
+        botMsg.innerText = data.response || "No response";
+
+    } catch (error) {
+        botMsg.innerText = "Server error ❌";
+    }
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// ⌨️ Enter key
+document.getElementById("userInput")
+.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        sendMessage();
+    }
+});
+
+// 🌅 Greeting on load
+window.onload = async function () {
+    let name = localStorage.getItem("username");
+
+    if (!name) {
+        name = prompt("Enter your name:");
+        localStorage.setItem("username", name);
+    }
+
+    let chatBox = document.getElementById("chatBox");
+
+    let botMsg = document.createElement("div");
+    botMsg.className = "message bot";
+    botMsg.innerText = "Loading...";
+    chatBox.appendChild(botMsg);
+
+    try {
+        let response = await fetch(`http://127.0.0.1:8000/greet?name=${name}`);
+        let data = await response.json();
+
+        botMsg.innerText = data.response || "Welcome!", name;
+
+    } catch {
+        botMsg.innerText = "Server not connected ❌";
+    }
+};
+
+</script>
+
+</body>
+</html>
