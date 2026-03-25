@@ -8,7 +8,7 @@ import ChatBox from "./components/ChatBox";
 import ChatInput from "./components/ChatInput";
 import LogoutModal from "./components/LogoutModal";
 
-const API = process.env.REACT_APP_API_URL || "/api";
+const API = process.env.REACT_APP_API_URL || "https://ayush-chatbot-2.onrender.com";
 
 function App() {
   const [messages, setMessages] = useState([]);
