@@ -17,7 +17,7 @@ const ChatInput = ({ input, setInput, mode, setMode, isModeOpen, setIsModeOpen, 
           title="Response Mode"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-          <span>{mode === 'short' ? 'Short' : mode === 'detailed' ? 'Detailed' : mode === 'gemini' ? 'Gemini' : 'Image'}</span>
+          <span className="hide-on-mobile">{mode === 'short' ? 'Short' : mode === 'detailed' ? 'Detailed' : mode === 'gemini' ? 'Gemini' : 'Image'}</span>
           <span className={`chevron ${isModeOpen ? 'open' : ''}`}>
             <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>
           </span>
@@ -71,7 +71,10 @@ const ChatInput = ({ input, setInput, mode, setMode, isModeOpen, setIsModeOpen, 
         placeholder={mode === 'image' ? "Give prompt for creating images..." : "Type a message..."}
         onKeyDown={e => e.key === "Enter" && sendMessage()}
       />
-      <button className="send-btn" onClick={sendMessage}>Send ➤</button>
+      <button className="send-btn" onClick={sendMessage} title="Send Message">
+        <span className="hide-on-mobile">Send </span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
     </div>
   );
 };

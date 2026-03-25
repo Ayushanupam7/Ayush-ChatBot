@@ -49,7 +49,7 @@ const ChatHeader = ({ mode, activeProvider, isFullScreen, setIsFullScreen, isLig
           title="Logout / Change Name"
         >
           <div className="profile-avatar">{name ? name.charAt(0).toUpperCase() : "U"}</div>
-          <span className="profile-name">{name}</span>
+          <span className="profile-name hide-on-mobile">{name}</span>
         </button>
       </div>
     </div>

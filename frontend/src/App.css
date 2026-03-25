@@ -88,6 +88,11 @@ body {
   }
 }
 
+/* ── Responsiveness Helpers ── */
+.hide-on-mobile {
+  display: inline;
+}
+
 .desktop-only {
   display: none !important;
 }
@@ -95,6 +100,12 @@ body {
 @media (min-width: 768px) {
   .desktop-only {
     display: flex !important;
+  }
+}
+
+@media (max-width: 580px) {
+  .hide-on-mobile {
+    display: none !important;
   }
 }
 
@@ -153,7 +164,13 @@ body {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .header-actions {
+    gap: 12px;
+  }
 }
 
 .theme-btn {
@@ -314,9 +331,15 @@ body {
   border-radius: 18px;
   font-size: 14px;
   line-height: 1.6;
-  max-width: 72%;
+  max-width: 85%;
   word-break: break-word;
   white-space: pre-wrap;
+}
+
+@media (min-width: 480px) {
+  .bubble {
+    max-width: 78%;
+  }
 }
 
 @media (min-width: 768px) {
@@ -521,6 +544,23 @@ body {
   }
 }
 
+@media (max-width: 480px) {
+  .input-area {
+    padding: 12px 12px;
+    gap: 8px;
+  }
+  
+  .dropdown-toggle {
+    padding: 13px 12px;
+  }
+  
+  .send-btn {
+    padding: 13px;
+    aspect-ratio: 1/1;
+    border-radius: 14px;
+  }
+}
+
 .input-field {
   flex: 1;
   background: #0f0f13;
@@ -555,6 +595,10 @@ body {
   transition: opacity 0.2s, transform 0.1s;
   flex-shrink: 0;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .send-btn:hover {
