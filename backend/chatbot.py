@@ -82,7 +82,7 @@ if OPENROUTER_API_KEY:
 # ─────────────────────────────────────────
 # 📚 Dictionary responses (always checked first)
 # ─────────────────────────────────────────
-from dictionary import responses
+from backend.dictionary import responses
 
 def get_system_prompt(mode: str) -> str:
     base = "You are a helpful, friendly chatbot created by Ayush."
@@ -224,7 +224,7 @@ def getResponseBot(userQuestion: str, mode: str, history: list, image: str = Non
     return "Sorry, I couldn't find an answer for that. 😊", "System"
 
 
-from kling_image import generate_kling_image
+from backend.kling_image import generate_kling_image
 
 class ImageInput(BaseModel):
     prompt: str
