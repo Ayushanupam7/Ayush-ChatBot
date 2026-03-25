@@ -229,7 +229,7 @@ from kling_image import generate_kling_image
 class ImageInput(BaseModel):
     prompt: str
 
-@app.post("/generate-image")
+@app.post("/api/generate-image")
 def generate_image(input_data: ImageInput):
     if not input_data.prompt.strip():
         return {"error": "Prompt cannot be empty! 😊"}
@@ -237,7 +237,7 @@ def generate_image(input_data: ImageInput):
     result = generate_kling_image(input_data.prompt)
     return result
 
-@app.post("/chat")
+@app.post("/api/chat")
 def chat(user: UserInput):
     if not user.message.strip():
         return {"response": "Please type a message! 😊", "provider": "System"}
@@ -245,7 +245,7 @@ def chat(user: UserInput):
     return {"response": ans, "provider": prov}
 
 
-@app.get("/greet")
+@app.get("/api/greet")
 def greet(name: str = "User"):
     hour = datetime.datetime.now().hour
     if 5 <= hour < 12:
