@@ -1,47 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 
 const ChatInput = ({ input, setInput, mode, setMode, isModeOpen, setIsModeOpen, sendMessage, handleDropdownEnter, handleDropdownLeave, dropdownTimerRef }) => {
-  const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef(null);
-
-  useEffect(() => {
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      const SpeechRecognitionComponent = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognitionComponent();
-      recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = false;
-      recognitionRef.current.lang = 'en-US';
-
-      recognitionRef.current.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setInput(prev => prev ? prev + ' ' + transcript : transcript);
-      };
-
-      recognitionRef.current.onerror = (event) => {
-        console.error("Speech recognition error", event.error);
-        setIsListening(false);
-      };
-
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-      };
-    }
-  }, [setInput]);
-
-  const toggleListening = () => {
-    if (!recognitionRef.current) {
-      alert("Your browser does not support Speech Recognition.");
-      return;
-    }
-    if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    } else {
-      recognitionRef.current.start();
-      setIsListening(true);
-    }
-  };
-
   return (
     <div className="input-area">
       <div
@@ -105,18 +64,6 @@ const ChatInput = ({ input, setInput, mode, setMode, isModeOpen, setIsModeOpen, 
           </div>
         )}
       </div>
-      <button 
-        className={`mic-btn ${isListening ? 'listening' : ''}`} 
-        onClick={toggleListening}
-        title={isListening ? "Stop Listening" : "Start Voice Input"}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke={isListening ? "#fc8181" : "currentColor"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
-          <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-          <line x1="12" y1="19" x2="12" y2="23"></line>
-          <line x1="8" y1="23" x2="16" y2="23"></line>
-        </svg>
-      </button>
       <input
         className="input-field"
         value={input}

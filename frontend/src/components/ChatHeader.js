@@ -15,10 +15,10 @@ const ChatHeader = ({ mode, activeProvider, isFullScreen, setIsFullScreen, isLig
               </linearGradient>
             </defs>
           </svg>
-        ) : <img src="/image.png" alt="bot" style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit'}} />}
+        ) : <img src="/image.png" alt="bot" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />}
       </div>
       <div className="header-info">
-        <div className="header-name">Ayush Chatbot</div>
+        <div className="header-name">AY Chatbot</div>
         <div className="header-status">
           <div className="status-dot" />
           {activeProvider}
