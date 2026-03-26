@@ -452,13 +452,14 @@ body {
 .custom-dropdown {
   position: relative;
   flex-shrink: 0;
+
 }
 
 .dropdown-toggle {
   background-color: #0f0f13;
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 14px;
-  padding: 13px 14px 13px 18px;
+  padding: 13px 14px 13px 8px;
   color: #e2e8f0;
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
@@ -549,11 +550,11 @@ body {
     padding: 12px 12px;
     gap: 8px;
   }
-  
+
   .dropdown-toggle {
-    padding: 13px 12px;
+    padding: 19px 12px;
   }
-  
+
   .send-btn {
     padding: 13px;
     aspect-ratio: 1/1;
@@ -762,19 +763,101 @@ body {
   gap: 12px;
 }
 
-.modal-buttons button {
-  flex: 1;
-  padding: 10px;
-  border-radius: 12px;
+.history-modal {
+  max-width: 400px !important;
+  padding: 32px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-icon-wrap {
+  width: 56px;
+  height: 56px;
+  background: rgba(229, 62, 62, 0.1);
+  color: #e53e3e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.modal-icon-wrap svg {
+  width: 28px;
+  height: 28px;
+}
+
+.history-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px !important;
+  border-radius: 14px !important;
+  font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.history-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.history-btn.preview {
+  background: rgba(255, 255, 255, 0.04);
+  color: #e2e8f0;
+}
+
+.history-btn.preview:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(99, 179, 237, 0.4);
+}
+
+.history-btn.download {
+  background: linear-gradient(135deg, #48bb78, #38a169);
+  color: #fff;
+  border: none;
+}
+
+.history-btn.download:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.2);
+}
+
+.modal-footer-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.modal-footer-actions button {
+  flex: 1;
+  padding: 12px !important;
 }
 
 .modal-cancel-btn {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
   color: #e2e8f0;
 }
 
@@ -784,12 +867,13 @@ body {
 
 .modal-confirm-btn {
   background: #e53e3e;
+  border-radius: 10px;
   border: none;
   color: #fff;
 }
 
 .modal-confirm-btn:hover {
-  background: #c53030;
+  background: #ff0000;
   transform: scale(0.97);
 }
 

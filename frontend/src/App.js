@@ -8,7 +8,7 @@ import ChatBox from "./components/ChatBox";
 import ChatInput from "./components/ChatInput";
 import LogoutModal from "./components/LogoutModal";
 
-const API = process.env.REACT_APP_API_URL || "https://ayush-chatbot-2.onrender.com";
+const API = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -209,7 +209,7 @@ function App() {
         dropdownTimerRef={dropdownTimerRef} 
       />
 
-      {showLogoutModal && <LogoutModal setShowLogoutModal={setShowLogoutModal} />}
+      {showLogoutModal && <LogoutModal setShowLogoutModal={setShowLogoutModal} messages={messages} />}
     </div>
   );
 }

@@ -24,7 +24,7 @@ app.add_middleware(
 UPLOAD_DIR = "uploads"
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
-app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+app.mount("/api/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 # 🔑 All API Keys from .env
 OPENAI_API_KEY      = os.getenv("OPENAI_API_KEY")
@@ -82,7 +82,7 @@ if OPENROUTER_API_KEY:
 # ─────────────────────────────────────────
 # 📚 Dictionary responses (always checked first)
 # ─────────────────────────────────────────
-from backend.dictionary import responses
+from dictionary import responses
 
 def get_system_prompt(mode: str) -> str:
     base = "You are a helpful, friendly chatbot created by Ayush."
@@ -224,7 +224,7 @@ def getResponseBot(userQuestion: str, mode: str, history: list, image: str = Non
     return "Sorry, I couldn't find an answer for that. 😊", "System"
 
 
-from backend.kling_image import generate_kling_image
+from kling_image import generate_kling_image
 
 class ImageInput(BaseModel):
     prompt: str
