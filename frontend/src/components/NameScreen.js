@@ -4,7 +4,7 @@ const NameScreen = ({ name, setName, onNameSubmit }) => {
   return (
     <div className="name-screen">
       <div className="name-card">
-        <div className="name-bot-icon">🤖</div>
+        <div className="name-bot-icon"><img src="/image.png" alt="bot" style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit'}} /></div>
         <h2 className="name-title">Welcome to Ayush Chatbot</h2>
         <p className="name-subtitle">Tell me your name to get started</p>
         <input

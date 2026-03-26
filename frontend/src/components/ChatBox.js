@@ -8,7 +8,7 @@ const ChatBox = ({ messages, isTyping, isGeneratingImage, bottomRef }) => {
 
       {messages.map((msg, i) => (
         <div key={i} className={`msg-row ${msg.sender}`}>
-          {msg.sender === "bot" && <div className="msg-avatar">🤖</div>}
+          {msg.sender === "bot" && <div className="msg-avatar"><img src="/image.png" alt="bot" style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit'}} /></div>}
           {msg.sender === "user" && msg.text && <CopyButton text={msg.text} title="Copy user message" />}
           <div className={`bubble ${msg.sender}`}>
             {msg.image && <img src={msg.image} alt="Attachment" className="bubble-image" />}
@@ -37,7 +37,7 @@ const ChatBox = ({ messages, isTyping, isGeneratingImage, bottomRef }) => {
       {/* Generating Image indicator */}
       {isGeneratingImage && (
         <div className="msg-row bot">
-          <div className="msg-avatar">🤖</div>
+          <div className="msg-avatar"><img src="/image.png" alt="bot" style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit'}} /></div>
           <div className="bubble bot">
             <div className="generating-text">
               Generating Image...
@@ -54,7 +54,7 @@ const ChatBox = ({ messages, isTyping, isGeneratingImage, bottomRef }) => {
       {/* Typing indicator */}
       {isTyping && !isGeneratingImage && (
         <div className="msg-row bot">
-          <div className="msg-avatar">🤖</div>
+          <div className="msg-avatar"><img src="/image.png" alt="bot" style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit'}} /></div>
           <div className="bubble bot">
             <div className="typing-wrap">
               <div className="dot" />
