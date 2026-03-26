@@ -7,7 +7,6 @@ import ChatHeader from "./components/ChatHeader";
 import ChatBox from "./components/ChatBox";
 import ChatInput from "./components/ChatInput";
 import LogoutModal from "./components/LogoutModal";
-import CacheBuster from "./components/CacheBuster";
 
 const API = process.env.REACT_APP_API_URL || "https://ayush-chatbot-2.onrender.com/api";
 
@@ -174,17 +173,10 @@ function App() {
   };
 
   if (!isNameSet) {
-    return (
-      <>
-        <CacheBuster />
-        <NameScreen name={name} setName={setName} onNameSubmit={handleNameSubmit} />
-      </>
-    );
+    return <NameScreen name={name} setName={setName} onNameSubmit={handleNameSubmit} />;
   }
 
   return (
-    <>
-    <CacheBuster />
     <div className={`chat-app ${isFullScreen ? "full-screen" : ""}`}>
       <ChatHeader
         mode={mode}
@@ -219,7 +211,6 @@ function App() {
 
       {showLogoutModal && <LogoutModal setShowLogoutModal={setShowLogoutModal} messages={messages} />}
     </div>
-    </>
   );
 }
 
