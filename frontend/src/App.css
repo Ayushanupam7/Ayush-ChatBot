@@ -12,14 +12,28 @@ body {
   font-family: 'DM Sans', sans-serif;
   background: #0f0f13;
   height: 100dvh;
+  height: 100%; /* Fallback */
   overflow: hidden;
 }
 
 #root {
   height: 100dvh;
+  height: 100%; /* Fallback */
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Ensures content anchors to the top on mobile so header doesn't hide */
   justify-content: center;
+}
+
+@supports (height: 100dvh) {
+  body, #root {
+    height: 100dvh;
+  }
+}
+
+@media (min-width: 768px) {
+  #root {
+    align-items: center; /* Center vertically on desktop */
+  }
 }
 
 /* ── Animations ── */
@@ -67,7 +81,7 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100dvh;
+  height: 100%; /* Will fill #root, which is exactly the screen height */
   background: #0f0f13;
   overflow: hidden;
 }
@@ -242,6 +256,7 @@ body {
 /* ── Chat Box ── */
 .chat-box {
   flex: 1;
+  min-height: 0; /* Allows shrinking smaller than contents when keyboard opens */
   overflow-y: auto;
   padding: 20px 16px;
   display: flex;
@@ -587,7 +602,7 @@ body {
   background: linear-gradient(135deg, #4299e1, #9f7aea);
   border: none;
   border-radius: 14px;
-  padding: 13px 0px;
+  padding: 13px 10px;
   color: #fff;
   font-weight: 600;
   font-size: 15px;
@@ -613,7 +628,7 @@ body {
 /* ── Name Screen ── */
 .name-screen {
   width: 100%;
-  height: 100dvh;
+  height: 100%; /* Adapts to #root's height */
   display: flex;
   align-items: center;
   justify-content: center;
