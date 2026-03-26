@@ -582,23 +582,7 @@ body {
   }
 }
 
-@media (max-width: 480px) {
-  .input-area {
-    padding: 10px 10px;
-    gap: 5px;
-  }
 
-  .dropdown-toggle {
-    padding: 19px 12px;
-  }
-
-  .send-btn {
-    padding: 10px;
-    aspect-ratio: 1/1;
-    border-radius: 10px;
-
-  }
-}
 
 
 .input-field {
@@ -647,6 +631,47 @@ body {
 
 .send-btn:active {
   transform: scale(0.96);
+}
+
+@media (max-width: 480px) {
+  .input-area {
+    padding: 12px;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .input-field {
+    flex: 1 1 100%;
+    order: -1;
+  }
+
+  .custom-dropdown {
+    flex: 0 0 auto;
+  }
+
+  .dropdown-toggle {
+    padding: 12px 14px;
+    border-radius: 20px;
+  }
+
+  .send-btn {
+    flex: 0 0 auto;
+    padding: 0;
+    width: 48px;
+    height: 48px;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4);
+    animation: sendPulse 2s infinite ease-in-out;
+  }
+}
+
+@keyframes sendPulse {
+  0% { box-shadow: 0 0 0 0 rgba(66, 153, 225, 0.5); }
+  70% { box-shadow: 0 0 0 12px rgba(66, 153, 225, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(66, 153, 225, 0); }
 }
 
 /* ── Name Screen ── */
