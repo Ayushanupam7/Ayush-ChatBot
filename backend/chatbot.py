@@ -1,28 +1,21 @@
+from fastapi import FastAPI # type: ignore
+from fastapi.staticfiles import StaticFiles # type: ignore
+from pydantic import BaseModel # type: ignore
+from typing import List, Dict, Optional, Any
+from fastapi.middleware.cors import CORSMiddleware # type: ignore
 import datetime
 import os
+from dotenv import load_dotenv # type: ignore
 import re
+
 import sys
-from typing import List, Dict, Optional
+import os
+from dotenv import load_dotenv # type: ignore
 
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from dotenv import load_dotenv
-
-# Ensure local imports work regardless of start directory
+# Ensure local imports (dictionary, kling_image) work regardless of start directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.append(current_dir)
-
-# Local imports
-try:
-    from dictionary import responses
-    from kling_image import generate_kling_image
-except ImportError:
-    # Fallback for different package structures
-    from .dictionary import responses
-    from .kling_image import generate_kling_image
 
 load_dotenv()
 
@@ -37,10 +30,18 @@ app.add_middleware(
 )
 
 # Serve uploads folder
-UPLOAD_DIR = "uploads"
-if not os.path.exists(UPLOAD_DIR):
-    os.makedirs(UPLOAD_DIR)
-app.mount("/api/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+import tempfile
+if os.environ.get("VERCEL") == "1" or not os.access('.', os.W_OK):
+    UPLOAD_DIR = os.path.join(tempfile.gettempdir(), "uploads")
+else:
+    UPLOAD_DIR = "uploads"
+
+try:
+    if not os.path.exists(UPLOAD_DIR):
+        os.makedirs(UPLOAD_DIR, exist_ok=True)
+    app.mount("/api/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+except Exception as e:
+    print(f"Warning: Could not setup uploads directory: {e}")
 
 # 🔑 All API Keys from .env
 OPENAI_API_KEY      = os.getenv("OPENAI_API_KEY")
@@ -53,41 +54,41 @@ GROQ_API_KEY        = os.getenv("GROQ_API_KEY")
 # ─────────────────────────────────────────
 
 # 1. Groq (recommended - most free)
-groq_client = None
+groq_client: Any = None
 if GROQ_API_KEY:
     try:
-        from groq import Groq
-        groq_client = Groq(api_key=GROQ_API_KEY)
+        from groq import Groq # type: ignore
+        groq_client: Any = Groq(api_key=GROQ_API_KEY)
         print("✅ Groq ready")
     except Exception as e:
         print(f"❌ Groq: {e}")
 
 # 2. OpenAI
-openai_client = None
+openai_client: Any = None
 if OPENAI_API_KEY:
     try:
-        from openai import OpenAI
-        openai_client = OpenAI(api_key=OPENAI_API_KEY)
+        from openai import OpenAI # type: ignore
+        openai_client: Any = OpenAI(api_key=OPENAI_API_KEY)
         print("✅ OpenAI ready")
     except Exception as e:
         print(f"❌ OpenAI: {e}")
 
 # 3. Gemini (new SDK)
-gemini_client = None
+gemini_client: Any = None
 if GEMINI_API_KEY:
     try:
-        from google import genai
-        gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+        from google import genai # type: ignore
+        gemini_client: Any = genai.Client(api_key=GEMINI_API_KEY)
         print("✅ Gemini ready")
     except Exception as e:
         print(f"❌ Gemini: {e}")
 
 # 4. OpenRouter (uses OpenAI-compatible API)
-openrouter_client = None
+openrouter_client: Any = None
 if OPENROUTER_API_KEY:
     try:
-        from openai import OpenAI
-        openrouter_client = OpenAI(
+        from openai import OpenAI # type: ignore
+        openrouter_client: Any = OpenAI(
             api_key=OPENROUTER_API_KEY,
             base_url="https://openrouter.ai/api/v1",
         )
@@ -98,7 +99,7 @@ if OPENROUTER_API_KEY:
 # ─────────────────────────────────────────
 # 📚 Dictionary responses (always checked first)
 # ─────────────────────────────────────────
-# (Moved to imports at top)
+from dictionary import responses # type: ignore
 
 def get_system_prompt(mode: str) -> str:
     base = "You are a helpful, friendly chatbot created by Ayush."
@@ -116,25 +117,25 @@ class UserInput(BaseModel):
 # 🤖 Individual AI callers
 # ─────────────────────────────────────────
 
-def ask_groq(question: str, system_prompt: str, history: list) -> str:
+def ask_groq(question: str, system_prompt: str, history: List[Dict[str, str]]) -> str:
     msgs = [{"role": "system", "content": system_prompt}] + history + [{"role": "user", "content": question}]
-    result = groq_client.chat.completions.create(
+    result = groq_client.chat.completions.create( # type: ignore
         model="llama-3.3-70b-versatile",
         messages=msgs,
         max_tokens=1000,
     )
     return result.choices[0].message.content.strip()
 
-def ask_openai(question: str, system_prompt: str, history: list) -> str:
+def ask_openai(question: str, system_prompt: str, history: List[Dict[str, str]]) -> str:
     msgs = [{"role": "system", "content": system_prompt}] + history + [{"role": "user", "content": question}]
-    result = openai_client.chat.completions.create(
+    result = openai_client.chat.completions.create( # type: ignore
         model="gpt-3.5-turbo",
         messages=msgs,
         max_tokens=1000,
     )
     return result.choices[0].message.content.strip()
 
-def ask_gemini(question: str, system_prompt: str, history: list) -> str:
+def ask_gemini(question: str, system_prompt: str, history: List[Dict[str, str]]) -> str:
     import time
     contents = f"System: {system_prompt}\n\n"
     for msg in history:
@@ -144,8 +145,8 @@ def ask_gemini(question: str, system_prompt: str, history: list) -> str:
     
     for attempt in range(2):
         try:
-            result = gemini_client.models.generate_content(
-                model="gemini-1.5-flash", 
+            result = gemini_client.models.generate_content( # type: ignore
+                model="gemini-2.5-flash", 
                 contents=contents,
             )
             return result.text.strip()
@@ -155,10 +156,11 @@ def ask_gemini(question: str, system_prompt: str, history: list) -> str:
                 time.sleep(2)
                 continue
             raise e
+    return ""
 
-def ask_openrouter(question: str, system_prompt: str, history: list) -> str:
+def ask_openrouter(question: str, system_prompt: str, history: List[Dict[str, str]]) -> str:
     msgs = [{"role": "system", "content": system_prompt}] + history + [{"role": "user", "content": question}]
-    result = openrouter_client.chat.completions.create(
+    result = openrouter_client.chat.completions.create( # type: ignore
         model="mistralai/mistral-7b-instruct:free",  # free model on OpenRouter
         messages=msgs,
         max_tokens=1000,
@@ -177,8 +179,8 @@ AI_PROVIDERS = [
     ("OpenRouter",  openrouter_client,  ask_openrouter),
 ]
 
-def getResponseBot(userQuestion: str, mode: str, history: list, image: str = None) -> tuple:
-    userQuestionLower = userQuestion.lower().strip()
+def getResponseBot(userQuestion: str, mode: str, history: List[Dict[str, str]], image: Optional[str] = None) -> tuple:
+    userQuestionLower: str = userQuestion.lower().strip()
 
     # 1. Dictionary Matching
     dictionary_matches = []
@@ -186,7 +188,7 @@ def getResponseBot(userQuestion: str, mode: str, history: list, image: str = Non
     sorted_keys = sorted(responses.keys(), key=len, reverse=True)
     
     # Track the portion of the string that was matched by dictionary
-    remaining_question = userQuestionLower
+    remaining_question: str = userQuestionLower
     
     for key in sorted_keys:
         if any(key in mk for mk in matched_keys):
@@ -196,11 +198,12 @@ def getResponseBot(userQuestion: str, mode: str, history: list, image: str = Non
             dictionary_matches.append(responses[key])
             matched_keys.append(key)
             # Remove the matched keyword to see what's left for the AI
-            remaining_question = re.sub(rf'\b{re.escape(key)}\b', '', remaining_question).strip()
+            remaining_question = str(re.sub(rf'\b{re.escape(key)}\b', '', remaining_question)).strip()
 
     # Determine if we should also ask the AI
     # If the remaining question has significant content (e.g., "what is python")
-    should_ask_ai = len(remaining_question.split()) >= 2 or ("what" in remaining_question or "who" in remaining_question or "how" in remaining_question)
+    req: str = str(remaining_question)
+    should_ask_ai = len(req.split()) >= 2 or ("what" in req or "who" in req or "how" in req)
     
     system_prompt = get_system_prompt(mode)
     ai_answer = None
@@ -240,10 +243,7 @@ def getResponseBot(userQuestion: str, mode: str, history: list, image: str = Non
     return "Sorry, I couldn't find an answer for that. 😊", "System"
 
 
-# ─────────────────────────────────────────
-# 🎨 Image Generation Logic
-# ─────────────────────────────────────────
-# (Import moved to top)
+from kling_image import generate_kling_image # type: ignore
 
 class ImageInput(BaseModel):
     prompt: str
@@ -260,7 +260,8 @@ def generate_image(input_data: ImageInput):
 def chat(user: UserInput):
     if not user.message.strip():
         return {"response": "Please type a message! 😊", "provider": "System"}
-    ans, prov = getResponseBot(user.message, user.mode, user.history)
+    hs: List[Dict[str, str]] = user.history or []
+    ans, prov = getResponseBot(user.message, user.mode, hs)
     return {"response": ans, "provider": prov}
 
 

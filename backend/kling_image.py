@@ -6,14 +6,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 KLING_API_KEY = os.getenv("KLING_API_KEY")
-UPLOAD_DIR = "uploads"
+import tempfile
+if os.environ.get("VERCEL") == "1" or not os.access('.', os.W_OK):
+    UPLOAD_DIR = os.path.join(tempfile.gettempdir(), "uploads")
+else:
+    UPLOAD_DIR = "uploads"
 
 def save_image_from_url(url: str):
     """Downloads an image from a URL and saves it to the uploads folder."""
-    if not os.path.exists(UPLOAD_DIR):
-        os.makedirs(UPLOAD_DIR)
-    
     try:
+        if not os.path.exists(UPLOAD_DIR):
+            os.makedirs(UPLOAD_DIR, exist_ok=True)
         response = requests.get(url, stream=True)
         response.raise_for_status()
         
