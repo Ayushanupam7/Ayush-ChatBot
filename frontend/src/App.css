@@ -593,9 +593,10 @@ body {
   }
 
   .send-btn {
-    padding: 13px;
+    padding: 10px;
     aspect-ratio: 1/1;
-    border-radius: 4px;
+    border-radius: 10px;
+
   }
 }
 
@@ -625,9 +626,9 @@ body {
   background: linear-gradient(135deg, #4299e1, #9f7aea);
   border: none;
   border-radius: 14px;
-  padding: 13px 10px;
+  padding: 13px 18px;
   color: #fff;
-  font-weight: 600;
+
   font-size: 15px;
   cursor: pointer;
   font-family: 'DM Sans', sans-serif;
@@ -669,14 +670,16 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.35; /* Dimmed heavily so card stays readable */
+  opacity: 0.35;
+  /* Dimmed heavily so card stays readable */
   z-index: 0;
 }
 
 .name-card {
   position: relative;
   z-index: 10;
-  background: rgba(22, 22, 29, 0.85); /* Slightly transparent to see video behind */
+  background: rgba(22, 22, 29, 0.85);
+  /* Slightly transparent to see video behind */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
