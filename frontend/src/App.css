@@ -8,27 +8,29 @@
   padding: 0;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: fixed; /* Stops Android from panning layout viewport up */
+}
+
 body {
   font-family: 'DM Sans', sans-serif;
   background: #0f0f13;
-  height: 100dvh;
-  height: 100%; /* Fallback */
-  overflow: hidden;
 }
 
 #root {
-  height: 100dvh;
-  height: 100%; /* Fallback */
+  width: 100%;
+  height: 100%;
   display: flex;
-  align-items: flex-start; /* Ensures content anchors to the top on mobile so header doesn't hide */
+  align-items: flex-start;
   justify-content: center;
 }
 
-@supports (height: 100dvh) {
-  body, #root {
-    height: 100dvh;
-  }
-}
+
 
 @media (min-width: 768px) {
   #root {
