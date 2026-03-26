@@ -8,6 +8,15 @@ import os
 from dotenv import load_dotenv
 import re
 
+import sys
+import os
+from dotenv import load_dotenv
+
+# Ensure local imports (dictionary, kling_image) work regardless of start directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
+
 load_dotenv()
 
 app = FastAPI()
@@ -129,7 +138,7 @@ def ask_gemini(question: str, system_prompt: str, history: list) -> str:
     for attempt in range(2):
         try:
             result = gemini_client.models.generate_content(
-                model="gemini-3-flash-preview", 
+                model="gemini-1.5-flash", 
                 contents=contents,
             )
             return result.text.strip()
