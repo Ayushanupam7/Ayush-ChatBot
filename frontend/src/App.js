@@ -7,6 +7,8 @@ import ChatHeader from "./components/ChatHeader";
 import ChatBox from "./components/ChatBox";
 import ChatInput from "./components/ChatInput";
 import LogoutModal from "./components/LogoutModal";
+import ProfileModal from "./components/ProfileModal";
+import SettingsModal from "./components/SettingsModal";
 
 const API = process.env.REACT_APP_API_URL || "https://ayush-chatbot-2.onrender.com/api";
 
@@ -22,7 +24,17 @@ function App() {
   const [isTyping, setIsTyping] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [modalType, setModalType] = useState("logout");
   const [isLightMode, setIsLightMode] = useState(() => localStorage.getItem("theme") === "light");
+  const [profileImage, setProfileImage] = useState(() => {
+    try {
+      return localStorage.getItem("profileImage") || null;
+    } catch {
+      return null;
+    }
+  });
   const [isFullScreen, setIsFullScreen] = useState(false);
   const bottomRef = useRef(null);
   const dropdownTimerRef = useRef(null);
@@ -187,6 +199,10 @@ function App() {
         setIsLightMode={setIsLightMode}
         name={name}
         setShowLogoutModal={setShowLogoutModal}
+        setModalType={setModalType}
+        profileImage={profileImage}
+        setShowProfileModal={setShowProfileModal}
+        setShowSettingsModal={setShowSettingsModal}
       />
 
       <ChatBox
@@ -209,7 +225,25 @@ function App() {
         dropdownTimerRef={dropdownTimerRef}
       />
 
-      {showLogoutModal && <LogoutModal setShowLogoutModal={setShowLogoutModal} messages={messages} />}
+      {showProfileModal && (
+        <ProfileModal 
+          setShowProfileModal={setShowProfileModal} 
+          name={name} 
+          setName={setName} 
+          profileImage={profileImage}
+          setProfileImage={setProfileImage}
+        />
+      )}
+
+      {showSettingsModal && (
+        <SettingsModal 
+          setShowSettingsModal={setShowSettingsModal}
+          isLightMode={isLightMode}
+          setIsLightMode={setIsLightMode}
+        />
+      )}
+
+      {showLogoutModal && <LogoutModal setShowLogoutModal={setShowLogoutModal} messages={messages} modalType={modalType} />}
     </div>
   );
 }

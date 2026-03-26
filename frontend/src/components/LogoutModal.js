@@ -1,7 +1,7 @@
 import React from "react";
 import { jsPDF } from "jspdf";
 
-const LogoutModal = ({ setShowLogoutModal, messages }) => {
+const LogoutModal = ({ setShowLogoutModal, messages, modalType }) => {
 
   const generatePDF = async () => {
     const doc = new jsPDF();
@@ -110,52 +110,65 @@ const LogoutModal = ({ setShowLogoutModal, messages }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content history-modal">
-        <div className="modal-header">
-          <div className="modal-icon-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
+    <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowLogoutModal(false); }}>
+      
+      {modalType === "logout" ? (
+        <div className="modal-content">
+          <div className="modal-header">
+            <div className="modal-icon-wrap" style={{ color: '#fc8181', background: 'rgba(252, 129, 129, 0.1)' }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+            </div>
+            <h3>Sign Out</h3>
+            <p>Are you sure you want to sign out? Your current session will end.</p>
           </div>
-          <h3>Sign Out</h3>
-          <p>Would you like to save your conversation before leaving?</p>
+
+          <div className="modal-footer-actions">
+            <button className="modal-cancel-btn" onClick={() => setShowLogoutModal(false)}>
+              Stay
+            </button>
+            <button className="modal-confirm-btn" style={{ background: '#e53e3e', color: 'white' }} onClick={() => {
+              localStorage.removeItem("username");
+              window.location.reload();
+            }}>
+              Log Out
+            </button>
+          </div>
         </div>
+      ) : (
+        <div className="modal-content history-modal">
+          <div className="modal-header">
+            <h3>Chat History</h3>
+            <p>Would you like to preview or download your current conversation?</p>
+          </div>
 
-        <div className="history-options">
-          <button className="history-btn preview" onClick={handlePreview}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-            <span>Preview History</span>
-          </button>
+          <div className="history-options">
+            <button className="history-btn preview" onClick={handlePreview}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <span>Preview History</span>
+            </button>
 
-          <button className="history-btn download" onClick={handleDownload}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            <span>Download PDF</span>
-          </button>
-        </div>
+            <button className="history-btn download" onClick={handleDownload}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              <span>Download PDF</span>
+            </button>
+          </div>
 
-        <div className="modal-footer-actions">
-          <button className="modal-cancel-btn" onClick={() => setShowLogoutModal(false)}>
-
-            Stay
-          </button>
-          <button className="modal-confirm-btn" onClick={() => {
-            localStorage.removeItem("username");
-            window.location.reload();
-          }}>
-            Log Out
+          <button className="modal-cancel-btn full-width" style={{ marginTop: '20px' }} onClick={() => setShowLogoutModal(false)}>
+            Close
           </button>
         </div>
-      </div>
+      )}
     </div>
   );
 };

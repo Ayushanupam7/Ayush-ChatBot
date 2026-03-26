@@ -1,6 +1,20 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 
-const ChatHeader = ({ mode, activeProvider, isFullScreen, setIsFullScreen, isLightMode, setIsLightMode, name, setShowLogoutModal }) => {
+const ChatHeader = ({ mode, activeProvider, isFullScreen, setIsFullScreen, isLightMode, setIsLightMode, name, setShowLogoutModal, setModalType, profileImage, setShowProfileModal, setShowSettingsModal }) => {
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileTimerRef = useRef(null);
+
+  const handleProfileEnter = () => {
+    if (profileTimerRef.current) clearTimeout(profileTimerRef.current);
+    setIsProfileMenuOpen(true);
+  };
+
+  const handleProfileLeave = () => {
+    profileTimerRef.current = setTimeout(() => {
+      setIsProfileMenuOpen(false);
+    }, 300);
+  };
+
   return (
     <div className="chat-header">
       <div className="header-avatar">
@@ -43,14 +57,62 @@ const ChatHeader = ({ mode, activeProvider, isFullScreen, setIsFullScreen, isLig
         >
           {isLightMode ? "🌙" : "☀️"}
         </button>
-        <button
-          className="profile-btn"
-          onClick={() => setShowLogoutModal(true)}
-          title="Logout / Change Name"
+        
+        <div 
+          className="profile-dropdown-container" 
+          style={{ position: 'relative' }}
+          onMouseEnter={handleProfileEnter}
+          onMouseLeave={handleProfileLeave}
         >
-          <div className="profile-avatar">{name ? name.charAt(0).toUpperCase() : "U"}</div>
-          <span className="profile-name hide-on-mobile">{name}</span>
-        </button>
+          <button
+            className="profile-btn"
+            onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+            title="Profile Menu"
+          >
+            <div className="profile-avatar" style={{overflow: 'hidden'}}>
+              {profileImage ? (
+                <img src={profileImage} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                name ? name.charAt(0).toUpperCase() : "U"
+              )}
+            </div>
+            <span className="profile-name hide-on-mobile">{name}</span>
+          </button>
+
+          {isProfileMenuOpen && (
+            <div className="profile-dropdown-menu">
+              <div
+                className="profile-dropdown-item"
+                onClick={() => { setIsProfileMenuOpen(false); setShowProfileModal(true); }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                Profile setting
+              </div>
+              <div
+                className="profile-dropdown-item"
+                onClick={() => { setIsProfileMenuOpen(false); setModalType("history"); setShowLogoutModal(true); }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><polyline points="12 8 12 12 14 14"></polyline><circle cx="12" cy="12" r="10"></circle></svg>
+                History
+              </div>
+              <div
+                className="profile-dropdown-item"
+                onClick={() => { setIsProfileMenuOpen(false); setShowSettingsModal(true); }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                Setting
+              </div>
+              <div className="profile-separator"></div>
+              <div
+                className="profile-dropdown-item logout"
+                onClick={() => { setIsProfileMenuOpen(false); setModalType("logout"); setShowLogoutModal(true); }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: '8px'}}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Log out
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
