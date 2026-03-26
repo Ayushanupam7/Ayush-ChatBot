@@ -547,8 +547,8 @@ body {
 
 @media (max-width: 480px) {
   .input-area {
-    padding: 12px 12px;
-    gap: 8px;
+    padding: 10px 10px;
+    gap: 5px;
   }
 
   .dropdown-toggle {
@@ -558,7 +558,7 @@ body {
   .send-btn {
     padding: 13px;
     aspect-ratio: 1/1;
-    border-radius: 14px;
+    border-radius: 4px;
   }
 }
 
@@ -587,7 +587,7 @@ body {
   background: linear-gradient(135deg, #4299e1, #9f7aea);
   border: none;
   border-radius: 14px;
-  padding: 13px 20px;
+  padding: 13px 0px;
   color: #fff;
   font-weight: 600;
   font-size: 15px;
