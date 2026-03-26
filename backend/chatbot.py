@@ -1,21 +1,28 @@
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
-from typing import List, Dict, Optional
-from fastapi.middleware.cors import CORSMiddleware
 import datetime
 import os
-from dotenv import load_dotenv
 import re
-
 import sys
-import os
+from typing import List, Dict, Optional
+
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from dotenv import load_dotenv
 
-# Ensure local imports (dictionary, kling_image) work regardless of start directory
+# Ensure local imports work regardless of start directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.append(current_dir)
+
+# Local imports
+try:
+    from dictionary import responses
+    from kling_image import generate_kling_image
+except ImportError:
+    # Fallback for different package structures
+    from .dictionary import responses
+    from .kling_image import generate_kling_image
 
 load_dotenv()
 
@@ -91,7 +98,7 @@ if OPENROUTER_API_KEY:
 # ─────────────────────────────────────────
 # 📚 Dictionary responses (always checked first)
 # ─────────────────────────────────────────
-from dictionary import responses
+# (Moved to imports at top)
 
 def get_system_prompt(mode: str) -> str:
     base = "You are a helpful, friendly chatbot created by Ayush."
@@ -233,7 +240,10 @@ def getResponseBot(userQuestion: str, mode: str, history: list, image: str = Non
     return "Sorry, I couldn't find an answer for that. 😊", "System"
 
 
-from kling_image import generate_kling_image
+# ─────────────────────────────────────────
+# 🎨 Image Generation Logic
+# ─────────────────────────────────────────
+# (Import moved to top)
 
 class ImageInput(BaseModel):
     prompt: str
