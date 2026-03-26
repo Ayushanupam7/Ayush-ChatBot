@@ -84,6 +84,7 @@ body {
   height: 100%; /* Will fill #root, which is exactly the screen height */
   background: #0f0f13;
   overflow: hidden;
+  padding-top: 76px; /* Offset for fixed header on mobile */
 }
 
 @media (min-width: 768px) {
@@ -91,6 +92,7 @@ body {
     width: 780px;
     height: 90dvh;
     border-radius: 24px;
+    padding-top: 0; /* Reset for desktop since header is normal flex child */
     box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
     transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-radius 0.3s ease;
   }
@@ -132,6 +134,17 @@ body {
   background: #16161d;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .chat-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 50;
+    max-height: 76px;
+  }
 }
 
 .header-avatar {
