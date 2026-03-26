@@ -8,7 +8,7 @@ import ChatBox from "./components/ChatBox";
 import ChatInput from "./components/ChatInput";
 import LogoutModal from "./components/LogoutModal";
 
-const API = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
+const API = process.env.REACT_APP_API_URL || "https://ayush-chatbot-2.onrender.com/api";
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -178,35 +178,35 @@ function App() {
 
   return (
     <div className={`chat-app ${isFullScreen ? "full-screen" : ""}`}>
-      <ChatHeader 
-        mode={mode} 
-        activeProvider={activeProvider} 
-        isFullScreen={isFullScreen} 
-        setIsFullScreen={setIsFullScreen} 
-        isLightMode={isLightMode} 
-        setIsLightMode={setIsLightMode} 
-        name={name} 
-        setShowLogoutModal={setShowLogoutModal} 
+      <ChatHeader
+        mode={mode}
+        activeProvider={activeProvider}
+        isFullScreen={isFullScreen}
+        setIsFullScreen={setIsFullScreen}
+        isLightMode={isLightMode}
+        setIsLightMode={setIsLightMode}
+        name={name}
+        setShowLogoutModal={setShowLogoutModal}
       />
-      
-      <ChatBox 
-        messages={messages} 
-        isTyping={isTyping} 
-        isGeneratingImage={isGeneratingImage} 
-        bottomRef={bottomRef} 
+
+      <ChatBox
+        messages={messages}
+        isTyping={isTyping}
+        isGeneratingImage={isGeneratingImage}
+        bottomRef={bottomRef}
       />
-      
-      <ChatInput 
-        input={input} 
-        setInput={setInput} 
-        mode={mode} 
-        setMode={setMode} 
-        isModeOpen={isModeOpen} 
-        setIsModeOpen={setIsModeOpen} 
-        sendMessage={sendMessage} 
-        handleDropdownEnter={handleDropdownEnter} 
-        handleDropdownLeave={handleDropdownLeave} 
-        dropdownTimerRef={dropdownTimerRef} 
+
+      <ChatInput
+        input={input}
+        setInput={setInput}
+        mode={mode}
+        setMode={setMode}
+        isModeOpen={isModeOpen}
+        setIsModeOpen={setIsModeOpen}
+        sendMessage={sendMessage}
+        handleDropdownEnter={handleDropdownEnter}
+        handleDropdownLeave={handleDropdownLeave}
+        dropdownTimerRef={dropdownTimerRef}
       />
 
       {showLogoutModal && <LogoutModal setShowLogoutModal={setShowLogoutModal} messages={messages} />}
