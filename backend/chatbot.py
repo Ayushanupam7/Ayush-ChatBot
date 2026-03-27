@@ -269,7 +269,7 @@ def chat(user: UserInput):
 def greet(name: str = "User"):
     hour = datetime.datetime.now().hour
     if 5 <= hour < 12:
-        g = "Good ayush"
+        g = "Good Morning"
     elif 12 <= hour < 17:
         g = "Good Afternoon"
     elif 17 <= hour < 21:
