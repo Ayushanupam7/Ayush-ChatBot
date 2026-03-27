@@ -27,6 +27,7 @@ import LogoutModal from "./components/LogoutModal";
 import ProfileModal from "./components/ProfileModal";
 import SettingsModal from "./components/SettingsModal";
 import SessionHistory from "./components/SessionHistory";
+import OnboardingTour from "./components/OnboardingTour";
 
 const API = process.env.REACT_APP_API_URL || "https://ayush-chatbot-2.onrender.com/api";
 
@@ -152,6 +153,26 @@ function App() {
     });
     return () => unsubscribe();
   }, []);
+
+  const [showTour, setShowTour] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setShowTour(false);
+      return;
+    }
+
+    const userId = user.uid;
+    const onboardKey = `onboarded_${userId}`;
+    const onboarded = localStorage.getItem(onboardKey) === "true";
+    if (!onboarded) {
+      const userName = user.displayName || (user.email ? user.email.split("@")[0] : "Friend");
+      setLocalGreeting({ text: `Welcome ${userName}! 👋 Let's take a quick tour of the app.`, sender: "bot", id: "tour-welcome" });
+      setShowTour(true);
+    } else {
+      setShowTour(false);
+    }
+  }, [user]);
 
   // 2. Firestore Sync (Listen for messages in the CURRENT session)
   useEffect(() => {
@@ -428,6 +449,13 @@ function App() {
           onSelectSession={loadSession}
           onClearAll={clearChat}
           onClose={() => setShowHistoryModal(false)}
+        />
+      )}
+
+      {showTour && (
+        <OnboardingTour
+          user={user}
+          onComplete={() => setShowTour(false)}
         />
       )}
 
