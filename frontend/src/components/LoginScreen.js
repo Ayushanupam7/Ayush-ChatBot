@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { auth } from "../firebase_config";
 import { 
   signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword 
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail
 } from "firebase/auth";
 import desktopBgVideo from "./vecteezy_artificial-intelligence-chatbot-motion-graphic-animation_26745505.mp4";
 import mobileBgVideo from "./0327(2).mp4";
@@ -14,6 +15,7 @@ const LoginScreen = ({ onLoginSuccess }) => {
   const [error, setError] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 767);
@@ -39,6 +41,24 @@ const LoginScreen = ({ onLoginSuccess }) => {
       setIsLoading(false);
     }
   };
+  
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError("Please enter your email first.");
+      return;
+    }
+    setError("");
+    setResetMessage("");
+    setIsLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setResetMessage("Password reset email sent! Check your inbox.");
+    } catch (err) {
+      setError(err.message.replace("Firebase: ", ""));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="name-screen">
@@ -58,6 +78,7 @@ const LoginScreen = ({ onLoginSuccess }) => {
         
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
           {error && <p className="auth-error">{error}</p>}
+          {resetMessage && <p className="auth-success">{resetMessage}</p>}
           <input
             className="name-input"
             type="email"
@@ -79,6 +100,12 @@ const LoginScreen = ({ onLoginSuccess }) => {
           <button className="name-btn" type="submit" disabled={isLoading}>
             {isLoading ? "Please wait..." : isLogin ? "Sign In →" : "Sign Up →"}
           </button>
+          
+          {isLogin && (
+            <div className="forgot-password-link" onClick={handleForgotPassword} style={{ textAlign: 'center', marginTop: '10px', fontSize: '13px', color: '#6366f1', cursor: 'pointer' }}>
+              Forgot password?
+            </div>
+          )}
         </form>
 
         <p className="auth-toggle">

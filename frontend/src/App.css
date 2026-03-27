@@ -891,6 +891,31 @@ body {
   opacity: 0.8;
 }
 
+.auth-error {
+  color: #fc8181;
+  font-size: 13px;
+  margin-bottom: 12px;
+  background: rgba(252, 129, 129, 0.1);
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(252, 129, 129, 0.2);
+}
+
+.auth-success {
+  color: #48bb78;
+  font-size: 13px;
+  margin-bottom: 12px;
+  background: rgba(72, 187, 120, 0.1);
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(72, 187, 120, 0.2);
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
 /* ── Modal ── */
 .modal-overlay {
   position: absolute;
