@@ -1,7 +1,9 @@
 import React from "react";
 import { jsPDF } from "jspdf";
 
-const LogoutModal = ({ setShowLogoutModal, messages, modalType }) => {
+const LogoutModal = ({ setShowLogoutModal, messages, modalType, onLogout, onClearChat }) => {
+
+
 
   const generatePDF = async () => {
     const doc = new jsPDF();
@@ -19,7 +21,7 @@ const LogoutModal = ({ setShowLogoutModal, messages, modalType }) => {
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(100);
-    doc.text(`Generated on ${new Date().toLocaleString()}`, margin, y + 8);
+    doc.text(`Generated on ${new Date().toLocaleString([], { hour12: true })}`, margin, y + 8);
 
     y += 25;
 
@@ -131,8 +133,8 @@ const LogoutModal = ({ setShowLogoutModal, messages, modalType }) => {
               Stay
             </button>
             <button className="modal-confirm-btn" style={{ background: '#e53e3e', color: 'white' }} onClick={() => {
-              localStorage.removeItem("username");
-              window.location.reload();
+              onLogout();
+              setShowLogoutModal(false);
             }}>
               Log Out
             </button>
@@ -140,33 +142,70 @@ const LogoutModal = ({ setShowLogoutModal, messages, modalType }) => {
         </div>
       ) : (
         <div className="modal-content history-modal">
+          <button className="modal-close-btn" onClick={() => setShowLogoutModal(false)}>×</button>
+          
           <div className="modal-header">
-            <h3>Chat History</h3>
-            <p>Would you like to preview or download your current conversation?</p>
+            <div className="modal-icon-wrap" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3>Conversation History</h3>
+            <p>Manage your chat transcript. You can preview, download, or permanently clear your history.</p>
           </div>
 
-          <div className="history-options">
-            <button className="history-btn preview" onClick={handlePreview}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-              <span>Preview History</span>
+          <div className="history-grid">
+            <button className="history-card preview" onClick={handlePreview}>
+              <div className="history-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </div>
+              <div className="history-card-info">
+                <span>Preview</span>
+                <small>View in browser</small>
+              </div>
             </button>
 
-            <button className="history-btn download" onClick={handleDownload}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              <span>Download PDF</span>
+            <button className="history-card download" onClick={handleDownload}>
+              <div className="history-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              </div>
+              <div className="history-card-info">
+                <span>Download</span>
+                <small>Save as PDF</small>
+              </div>
+            </button>
+
+            <button className="history-card clear" onClick={() => {
+              if (window.confirm("Are you sure? This will delete your entire chat history permanently from the cloud.")) {
+                onClearChat();
+                setShowLogoutModal(false);
+              }
+            }}>
+              <div className="history-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+              </div>
+              <div className="history-card-info">
+                <span>Clear All</span>
+                <small>Delete forever</small>
+              </div>
             </button>
           </div>
 
-          <button className="modal-cancel-btn full-width" style={{ marginTop: '20px' }} onClick={() => setShowLogoutModal(false)}>
-            Close
-          </button>
+          <div className="modal-footer">
+            <button className="modal-cancel-btn full-width" onClick={() => setShowLogoutModal(false)}>
+              Done
+            </button>
+          </div>
         </div>
       )}
     </div>

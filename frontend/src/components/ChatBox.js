@@ -2,37 +2,52 @@ import React from "react";
 import CopyButton from "./CopyButton";
 
 const ChatBox = ({ messages, isTyping, isGeneratingImage, bottomRef }) => {
+  const formatTime = (ts) => {
+    if (!ts) return "";
+    let date;
+    if (ts.seconds) {
+      date = new Date(ts.seconds * 1000);
+    } else {
+      date = new Date(ts);
+    }
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+  };
+
   return (
     <div className="chat-box">
-      <div className="date-divider">Today</div>
+      <div className="date-divider">
+        Today{messages.length > 0 && messages[0].timestamp ? `, ${formatTime(messages[0].timestamp)}` : ""}
+      </div>
 
-      {messages.map((msg, i) => (
-        <div key={i} className={`msg-row ${msg.sender}`}>
-          {msg.sender === "bot" && <div className="msg-avatar"><img src="/image.png" alt="bot" style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit'}} /></div>}
-          {msg.sender === "user" && msg.text && <CopyButton text={msg.text} title="Copy user message" />}
-          <div className={`bubble ${msg.sender}`}>
-            {msg.image && <img src={msg.image} alt="Attachment" className="bubble-image" />}
-            {msg.text && (
-              <div className="bubble-text">
-                {msg.text.split(/(\*\*.*?\*\*|https?:\/\/[^\s]+)/g).map((part, idx) => {
-                  if (part.startsWith("**") && part.endsWith("**")) {
-                    return <strong key={idx}>{part.slice(2, -2)}</strong>;
-                  }
-                  if (part.match(/^https?:\/\//)) {
-                    return (
-                      <a key={idx} href={part} target="_blank" rel="noopener noreferrer" className="message-link">
-                        {part}
-                      </a>
-                    );
-                  }
-                  return <span key={idx}>{part}</span>;
-                })}
-              </div>
-            )}
+      {messages.map((msg, i) => {
+        return (
+          <div key={i} className={`msg-row ${msg.sender}`}>
+            {msg.sender === "bot" && <div className="msg-avatar"><img src="/image.png" alt="bot" style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit'}} /></div>}
+            {msg.sender === "user" && msg.text && <CopyButton text={msg.text} title="Copy user message" />}
+            <div className={`bubble ${msg.sender}`}>
+              {msg.image && <img src={msg.image} alt="Attachment" className="bubble-image" />}
+              {msg.text && (
+                <div className="bubble-text">
+                  {msg.text.split(/(\*\*.*?\*\*|https?:\/\/[^\s]+)/g).map((part, idx) => {
+                    if (part.startsWith("**") && part.endsWith("**")) {
+                      return <strong key={idx}>{part.slice(2, -2)}</strong>;
+                    }
+                    if (part.match(/^https?:\/\//)) {
+                      return (
+                        <a key={idx} href={part} target="_blank" rel="noopener noreferrer" className="message-link">
+                          {part}
+                        </a>
+                      );
+                    }
+                    return <span key={idx}>{part}</span>;
+                  })}
+                </div>
+              )}
+            </div>
+            {msg.sender === "bot" && msg.text && <CopyButton text={msg.text} title="Copy bot response" />}
           </div>
-          {msg.sender === "bot" && msg.text && <CopyButton text={msg.text} title="Copy bot response" />}
-        </div>
-      ))}
+        );
+      })}
 
       {/* Generating Image indicator */}
       {isGeneratingImage && (
