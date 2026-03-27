@@ -48,6 +48,7 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
     };
 
     fetchSessions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, currentSessionId]); // Reduced dependencies to avoid loops
 
   // 2. Fetch messages for the SELECTED session preview
