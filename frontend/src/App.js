@@ -59,9 +59,18 @@ function App() {
     return `session_${Date.now()}`;
   });
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [toast, setToast] = useState(null); // { message, isHiding }
   const bottomRef = useRef(null);
   const dropdownTimerRef = useRef(null);
   const greetedSessionsRef = useRef(new Set());
+
+  const showToast = useCallback((msg) => {
+    setToast({ message: msg, isHiding: false });
+    setTimeout(() => {
+      setToast(prev => prev ? { ...prev, isHiding: true } : null);
+      setTimeout(() => setToast(null), 300);
+    }, 3000);
+  }, []);
 
   // 💾 Firestore Database Helpers
   const saveMessageToFirestore = useCallback(async (msg) => {
@@ -107,9 +116,15 @@ function App() {
   }, []);
 
   // 1. Auth Listener
+  const wasLoggedOutRef = useRef(false);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
+        if (wasLoggedOutRef.current) {
+          showToast("Login now");
+        }
+        wasLoggedOutRef.current = false;
         // Automatically set a default name if it's missing
         if (!currentUser.displayName && currentUser.email) {
           try {
@@ -147,6 +162,7 @@ function App() {
         }
 
       } else {
+        wasLoggedOutRef.current = true;
         setUser(null);
         setMessages([]); // Clear chat on logout
       }
@@ -470,11 +486,28 @@ function App() {
           messages={messages}
           modalType={modalType}
           onClearChat={clearChat}
-          onLogout={() => signOut(auth)}
+          onLogout={() => {
+            showToast("Logged out");
+            signOut(auth);
+          }}
         />
       )}
+
+      {toast && <Toast message={toast.message} isHiding={toast.isHiding} />}
     </div>
   );
 }
+
+// 🟢 Reusable Toast Component
+const Toast = ({ message, isHiding }) => {
+  return (
+    <div className="toast-container">
+      <div className={`toast ${isHiding ? 'hiding' : ''}`}>
+        <div className="toast-icon">✓</div>
+        {message}
+      </div>
+    </div>
+  );
+};
 
 export default App;

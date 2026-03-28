@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { auth } from "../firebase_config";
-import { 
-  signInWithEmailAndPassword, 
+import {
+  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail
 } from "firebase/auth";
@@ -16,6 +16,7 @@ const LoginScreen = ({ onLoginSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [resetMessage, setResetMessage] = useState("");
+  const [tipIndex, setTipIndex] = useState(-1);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 767);
@@ -36,12 +37,26 @@ const LoginScreen = ({ onLoginSuccess }) => {
       }
       // onAuthStateChanged in App.js will handle redirect
     } catch (err) {
-      setError(err.message.replace("Firebase: ", ""));
+      console.log("Auth Error Code:", err.code);
+      if (err.code === "auth/wrong-password" || (isLogin && err.code === "auth/invalid-credential")) {
+        setError(""); // Clear any previous general errors
+        setTipIndex(0);
+        setTimeout(() => setTipIndex(1), 5000);
+      } else if (err.code === "auth/user-not-found") {
+        setError(""); // Clear any previous general errors
+        setTipIndex(1);
+      } else if (err.code === "auth/email-already-in-use") {
+        setError("Account already exists. Login Now");
+        setTipIndex(-1);
+      } else {
+        setError(err.message.replace("Firebase: ", ""));
+        setTipIndex(-1);
+      }
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   const handleForgotPassword = async () => {
     if (!email) {
       setError("Please enter your email first.");
@@ -75,8 +90,20 @@ const LoginScreen = ({ onLoginSuccess }) => {
         </div>
         <h2 className="name-title">{isLogin ? "Welcome Back" : "Create Account"}</h2>
         <p className="name-subtitle">{isLogin ? "Log in to access your chat history" : "Join AY Chatbot today"}</p>
-        
+
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          {tipIndex === 0 && (
+            <div className="auth-tip-card warning">
+              <span className="auth-tip-card-icon">🔑</span>
+              <span>Password is incorrect Reset now</span>
+            </div>
+          )}
+          {tipIndex === 1 && (
+            <div className="auth-tip-card info">
+              <span className="auth-tip-card-icon">👋</span>
+              <span>If you are new Then sign up!</span>
+            </div>
+          )}
           {error && <p className="auth-error">{error}</p>}
           {resetMessage && <p className="auth-success">{resetMessage}</p>}
           <input
@@ -100,9 +127,9 @@ const LoginScreen = ({ onLoginSuccess }) => {
           <button className="name-btn" type="submit" disabled={isLoading}>
             {isLoading ? "Please wait..." : isLogin ? "Sign In →" : "Sign Up →"}
           </button>
-          
+
           {isLogin && (
-            <div className="forgot-password-link" onClick={handleForgotPassword} style={{ textAlign: 'center', marginTop: '10px', fontSize: '13px', color: '#6366f1', cursor: 'pointer' }}>
+            <div className="forgot-password-link" onClick={handleForgotPassword}>
               Forgot password?
             </div>
           )}
@@ -110,7 +137,7 @@ const LoginScreen = ({ onLoginSuccess }) => {
 
         <p className="auth-toggle">
           {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <span onClick={() => setIsLogin(!isLogin)} style={{ color: '#6366f1', cursor: 'pointer', fontWeight: '600' }}>
+          <span onClick={() => setIsLogin(!isLogin)} className="auth-toggle-link">
             {isLogin ? "Sign Up" : "Log In"}
           </span>
         </p>

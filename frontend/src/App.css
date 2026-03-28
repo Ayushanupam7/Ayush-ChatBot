@@ -81,6 +81,104 @@ body {
   }
 }
 
+@keyframes toastSlideIn {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toastSlideOut {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+.toast-container {
+  position: absolute;
+  bottom: 155px;
+  /* Positioned centered at the bottom, just above input */
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast {
+  background: rgba(16, 185, 129, 0.95);
+  backdrop-filter: blur(10px);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.toast.hiding {
+  animation: toastSlideOut 0.3s ease forwards;
+}
+
+.toast-icon {
+  width: 18px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+/* ── Auth Helpful Cards ── */
+.auth-tip-card {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  animation: fadeUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.auth-tip-card.warning {
+  background: rgba(248, 113, 113, 0.08);
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.15);
+}
+
+.auth-tip-card.info {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.15);
+}
+
+.auth-tip-card-icon {
+  font-size: 16px;
+}
+
 /* ── Chat App Shell ── */
 .chat-app {
   display: flex;
@@ -92,6 +190,7 @@ body {
   overflow: hidden;
   padding-top: 76px;
   /* Offset for fixed header on mobile */
+  position: relative;
 }
 
 @media (min-width: 768px) {
@@ -868,8 +967,9 @@ body {
   align-items: center;
   justify-content: center;
   background: #0f0f13;
-  padding: 20px;
-  overflow: hidden;
+  padding: 24px 20px;
+  overflow-y: auto; /* Support vertical scroll for small mobile screens with keyboards */
+  -webkit-overflow-scrolling: touch;
 }
 
 .name-bg-video {
@@ -901,12 +1001,50 @@ body {
   animation: fadeUp 0.4s ease both;
 }
 
+.name-card {
+  position: relative;
+  z-index: 10;
+  background: rgba(22, 22, 29, 0.85);
+  /* Slightly transparent to see video behind */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 44px 40px;
+  text-align: center;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  animation: fadeUp 0.4s ease both;
+  margin: auto; /* Center in scrollable container */
+}
+
 @media (max-width: 480px) {
   .name-card {
-    padding: 32px 20px;
+    padding: 32px 24px;
     border-radius: 20px;
-    width: 95%;
+    width: 100%; /* Take full width on small screens */
+    max-width: none;
+    border: none; /* Clean edge-to-edge feel if desired, or keep border */
   }
+}
+
+.forgot-password-link {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 14px;
+  color: #6366f1;
+  cursor: pointer;
+  padding: 8px; /* High touch target for mobile */
+  transition: all 0.2s;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+.light-mode .forgot-password-link {
+  color: #4f46e5;
 }
 
 .name-bot-icon {
@@ -2018,4 +2156,36 @@ body.light-mode,
   flex-direction: column;
   align-items: center;
   gap: 4px;
+}
+
+/* ── Auth Toggle (Login/Signup switch) ── */
+.auth-toggle {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #94a3b8; /* Soft blue-gray for dark mode */
+}
+
+.auth-toggle-link {
+  color: #6366f1;
+  cursor: pointer;
+  font-weight: 600;
+  margin-left: 5px;
+  transition: color 0.2s ease;
+}
+
+.auth-toggle-link:hover {
+  color: #818cf8;
+}
+
+/* Light Mode Overrides for Auth Toggle */
+.light-mode .auth-toggle {
+  color: #64748b; /* Slightly darker gray for light mode */
+}
+
+.light-mode .auth-toggle-link {
+  color: #4f46e5; /* Deeper indigo for better contrast in light mode */
+}
+
+.light-mode .auth-toggle-link:hover {
+  color: #4338ca;
 }
