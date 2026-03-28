@@ -51,7 +51,11 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
 
     // Ensure horizontal swipe is dominant and moved at least 60px right
     if (Math.abs(distanceX) > Math.abs(distanceY) && distanceX < -60) {
-      handleClose();
+      if (viewMode === "preview") {
+        setViewMode("list");
+      } else {
+        handleClose();
+      }
     }
   };
 
