@@ -12,12 +12,13 @@ import {
 
 const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, onClose }) => {
   const [sessions, setSessions] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedSessionId, setSelectedSessionId] = useState(null);
   const [previewMessages, setPreviewMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState("list"); // "list" or "preview" for mobile
 
-  // 1. Fetch ALL sessions (metadata only)
+  // 1. Fetch ALL sessions
   useEffect(() => {
     const fetchSessions = async () => {
       if (!user) return;
@@ -35,7 +36,6 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
 
         setSessions(sessionList);
 
-        // Auto-select current session or first session on load
         if (sessionList.length > 0 && !selectedSessionId) {
           const current = sessionList.find(s => s.id === currentSessionId);
           setSelectedSessionId(current ? current.id : sessionList[0].id);
@@ -48,10 +48,9 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
     };
 
     fetchSessions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, currentSessionId]); // Reduced dependencies to avoid loops
+  }, [user, currentSessionId]);
 
-  // 2. Fetch messages for the SELECTED session preview
+  // 2. Fetch messages for preview
   useEffect(() => {
     const fetchPreviewMessages = async () => {
       if (!user || !selectedSessionId) return;
@@ -73,6 +72,8 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
 
   const handleDeleteSession = async (e, sessionId) => {
     e.stopPropagation();
+    if (!window.confirm("Delete this conversation?")) return;
+
     try {
       const msgsQ = query(collection(db, "users", user.uid, "sessions", sessionId, "messages"));
       const msgsSnapshot = await getDocs(msgsQ);
@@ -92,6 +93,11 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
     }
   };
 
+  const filteredSessions = sessions.filter(s =>
+    (s.lastMessage || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (s.id || "").toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const activeSessionData = sessions.find(s => s.id === selectedSessionId);
 
   const formatText = (text) => {
@@ -100,7 +106,7 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
       if (part.startsWith("**") && part.endsWith("**")) {
         return <strong key={idx}>{part.slice(2, -2)}</strong>;
       }
-      if (part.match(/^https?:\/\//)) {
+      if (typeof part === 'string' && part.match(/^https?:\/\//)) {
         return <a key={idx} href={part} target="_blank" rel="noopener noreferrer" className="message-link">{part}</a>;
       }
       return <span key={idx}>{part}</span>;
@@ -113,19 +119,33 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
         <button className="modal-close-btn" onClick={onClose}>×</button>
 
         <div className="history-browser-container">
+          {/* Sidebar */}
           <div className={`history-sidebar ${viewMode === 'preview' ? 'mobile-hide' : ''}`}>
             <div className="history-sidebar-header">
               <h3>History</h3>
               <p>{sessions.length} Conversations</p>
             </div>
 
+            <div className="history-search-container">
+              <input
+                type="text"
+                className="history-search-input"
+                placeholder="Search conversations..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <svg className="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
+            </div>
+
             <div className="session-list-compact">
               {isLoading ? (
                 <div className="loading-state">Loading...</div>
-              ) : sessions.length === 0 ? (
-                <div className="no-history-text">No history found.</div>
+              ) : filteredSessions.length === 0 ? (
+                <div className="empty-preview-state" style={{ padding: '20px' }}>
+                  <p>{searchQuery ? "No matches found." : "No history yet."}</p>
+                </div>
               ) : (
-                sessions.map(session => (
+                filteredSessions.map(session => (
                   <div
                     key={session.id}
                     className={`session-item-compact ${session.id === selectedSessionId ? 'selected' : ''} ${session.id === currentSessionId ? 'is-current' : ''}`}
@@ -133,9 +153,8 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
                   >
                     <div className="session-dot" />
                     <div className="session-item-content">
-
-                      <div className="session-item-preview">{session.lastMessage}</div>
-                      <div className="session-item-date">{session.startTime.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })}</div>
+                      <div className="session-item-preview">{session.lastMessage || "Empty Chat"}</div>
+                      <div className="session-item-date">{session.startTime.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
                     </div>
                     <button className="delete-icon-btn" onClick={(e) => handleDeleteSession(e, session.id)}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18m-2 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /></svg>
@@ -153,12 +172,12 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
             </div>
           </div>
 
+          {/* Preview Area */}
           <div className={`history-preview-area ${viewMode === 'list' ? 'mobile-hide' : ''}`}>
-            {viewMode === 'preview' && (
-              <button className="back-to-list-btn mobile-only" onClick={() => setViewMode("list")}>
-                ← Back to List
-              </button>
-            )}
+            <button className="back-to-list-btn mobile-only" onClick={() => setViewMode("list")}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m15 18-6-6 6-6" /></svg>
+              Back to Conversations
+            </button>
 
             {selectedSessionId ? (
               <div className="preview-container">
@@ -166,25 +185,26 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
                   <div className="preview-meta">
                     {activeSessionData && (
                       <>
-                        <h4>{activeSessionData.startTime.toLocaleDateString()} at {activeSessionData.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}</h4>
-                        <span>{previewMessages.length} Messages</span>
+                        <h4>{activeSessionData.startTime.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}</h4>
+                        <span>{activeSessionData.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {previewMessages.length} messages</span>
                       </>
                     )}
                   </div>
                   <button className="restore-session-btn" onClick={() => onSelectSession(selectedSessionId)}>
-                    {selectedSessionId === currentSessionId ? "Continue Chat" : "Restore this Session"}
+                    {selectedSessionId === currentSessionId ? "Continue Chat" : "Restore"}
                   </button>
                 </div>
 
                 <div className="preview-messages-list">
-                  <div className="date-divider" style={{ margin: '0 0 20px 0' }}>
-                    {activeSessionData?.startTime.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' })}
-                  </div>
                   {previewMessages.map((msg, idx) => (
-                    <div key={idx} className={`msg-row ${msg.sender}`} style={{ marginBottom: '12px' }}>
-                      {msg.sender === "bot" && <div className="msg-avatar" style={{ width: '28px', height: '28px' }}><img src="/image.png" alt="bot" style={{ width: '100%', height: '100%', borderRadius: 'inherit' }} /></div>}
-                      <div className={`bubble ${msg.sender}`} style={{ padding: '8px 12px', fontSize: '13px' }}>
-                        {msg.image && <img src={msg.image} alt="Generated" style={{ maxWidth: '100%', borderRadius: '8px', marginBottom: '8px', display: 'block' }} />}
+                    <div key={idx} className={`msg-row ${msg.sender}`}>
+                      {msg.sender === "bot" && (
+                        <div className="msg-avatar" style={{ width: '28px', height: '28px', flexShrink: 0 }}>
+                          <img src="/image.png" alt="bot" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                        </div>
+                      )}
+                      <div className={`bubble ${msg.sender}`}>
+                        {msg.image && <img src={msg.image} alt="Generated" style={{ maxWidth: '100%', borderRadius: '12px', marginBottom: '8px', display: 'block' }} />}
                         <div className="bubble-text">{formatText(msg.text)}</div>
                       </div>
                     </div>
@@ -196,7 +216,7 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
-                <p>Select a conversation to see the full chat</p>
+                <p>Select a conversation from the list to see the full chat history</p>
               </div>
             )}
           </div>

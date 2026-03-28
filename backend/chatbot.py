@@ -4,12 +4,9 @@ from pydantic import BaseModel # type: ignore
 from typing import List, Dict, Optional, Any
 from fastapi.middleware.cors import CORSMiddleware # type: ignore
 import datetime
-import os
-from dotenv import load_dotenv # type: ignore
-import re
-
 import sys
 import os
+import re
 from dotenv import load_dotenv # type: ignore
 
 # Ensure local imports (dictionary, kling_image) work regardless of start directory
@@ -265,10 +262,10 @@ def chat(user: UserInput):
     return {"response": ans, "provider": prov}
 
 
-from fastapi import FastAPI
-import datetime
 
-app = FastAPI()
+# ─────────────────────────────────────────
+# 👋 Personalized Greeting (Now correctly registered)
+# ─────────────────────────────────────────
 
 @app.get("/api/greet")
 def greet(name: str = "User"):
