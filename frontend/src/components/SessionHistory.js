@@ -22,10 +22,43 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
   // Custom close function for smooth animation
   const handleClose = () => {
     setIsClosing(true);
+    // Remove the history state we pushed if it's still there
+    if (window.history.state?.modalOpen) {
+      window.history.back();
+    }
     setTimeout(() => {
       onClose();
     }, 250);
   };
+
+  // Sync hardware back button with modal state
+  useEffect(() => {
+    // 1. Initial State for Modal
+    if (!window.history.state?.modalOpen) {
+      window.history.pushState({ modalOpen: true, type: "list" }, "");
+    }
+
+    const handleHardwareBack = (event) => {
+      // If we are in preview mode, go back to list
+      if (viewMode === "preview") {
+        setViewMode("list");
+      } else {
+        // If we were already in list, close the modal
+        setIsClosing(true);
+        setTimeout(() => onClose(), 250);
+      }
+    };
+
+    window.addEventListener("popstate", handleHardwareBack);
+    return () => window.removeEventListener("popstate", handleHardwareBack);
+  }, [viewMode, onClose]);
+
+  // Push new state when entering preview to allow hardware back button to return to list
+  useEffect(() => {
+    if (viewMode === "preview") {
+      window.history.pushState({ modalOpen: true, type: "preview" }, "");
+    }
+  }, [viewMode]);
 
   const [touchStartX, setTouchStartX] = useState(null);
   const [touchEndX, setTouchEndX] = useState(null);
@@ -257,7 +290,13 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
                 </div>
 
                 <div className="preview-footer">
-                  <button className="restore-session-btn" onClick={() => onSelectSession(selectedSessionId)}>
+                  <button className="restore-session-btn" onClick={() => {
+                    // Pop any preview state and main history state before selecting
+                    if (window.history.state?.modalOpen) {
+                      window.history.go(viewMode === "preview" ? -2 : -1);
+                    }
+                    onSelectSession(selectedSessionId);
+                  }}>
                     {selectedSessionId === currentSessionId ? "Continue Chat" : "Restore"}
                   </button>
                   <button
