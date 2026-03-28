@@ -51,11 +51,7 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
 
     // Ensure horizontal swipe is dominant and moved at least 60px right
     if (Math.abs(distanceX) > Math.abs(distanceY) && distanceX < -60) {
-      if (viewMode === "preview") {
-        setViewMode("list");
-      } else {
-        handleClose();
-      }
+      handleClose(); // Closes the modal and goes to chat bot
     }
   };
 
