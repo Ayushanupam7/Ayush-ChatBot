@@ -265,15 +265,31 @@ def chat(user: UserInput):
     return {"response": ans, "provider": prov}
 
 
+from fastapi import FastAPI
+import datetime
+
+app = FastAPI()
+
 @app.get("/api/greet")
 def greet(name: str = "User"):
-    hour = datetime.datetime.now().hour
-    if 5 <= hour < 12:
+    now = datetime.datetime.now()
+    hour_24 = now.hour  # 0–23
+    
+    # Greeting logic (keep in 24-hour format)
+    if 5 <= hour_24 < 12:
         g = "Good Morning"
-    elif 12 <= hour < 17:
+    elif 12 <= hour_24 < 17:
         g = "Good Afternoon"
-    elif 17 <= hour < 21:
+    elif 17 <= hour_24 < 21:
         g = "Good Evening"
     else:
         g = "Good Night"
-    return {"response": f"{g}, {name}! 👋 How can I help you today?"}
+    
+    # Convert to 12-hour format
+    hour_12 = now.strftime("%I")  # 01–12
+    am_pm = now.strftime("%p")    # AM / PM
+
+    return {
+        "response": f"{g}, {name}! 👋",
+        "time": f"{hour_12}:{now.strftime('%M')} {am_pm}"
+    }
