@@ -386,7 +386,7 @@
 /* ───────────── MOBILE ───────────── */
 @media (max-width: 768px) {
   .history-browser-modal {
-    height: 100vh !important;
+    height: 100dvh !important;
     width: 100vw !important;
     border-radius: 0 !important;
   }
