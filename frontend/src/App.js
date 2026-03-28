@@ -4,12 +4,12 @@ import "./App.css";
 // Firebase
 import { auth, db } from "./firebase_config";
 import { onAuthStateChanged, signOut, updateProfile } from "firebase/auth";
-import { 
-  collection, 
-  addDoc, 
-  query, 
-  orderBy, 
-  onSnapshot, 
+import {
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
   serverTimestamp,
   getDocs,
   getDoc,
@@ -62,7 +62,7 @@ function App() {
   const bottomRef = useRef(null);
   const dropdownTimerRef = useRef(null);
   const greetedSessionsRef = useRef(new Set());
-  
+
   // 💾 Firestore Database Helpers
   const saveMessageToFirestore = useCallback(async (msg) => {
     if (!user) return;
@@ -115,14 +115,14 @@ function App() {
           try {
             const defaultName = currentUser.email.split("@")[0].substring(0, 5);
             await updateProfile(currentUser, { displayName: defaultName });
-            
+
             await setDoc(doc(db, "users", currentUser.uid), {
               displayName: defaultName,
               email: currentUser.email,
               lastLogin: serverTimestamp(),
               createdAt: serverTimestamp()
             }, { merge: true });
-            
+
             setUser({ ...currentUser, displayName: defaultName });
           } catch (error) {
             console.error("Error initializing profile:", error);
@@ -134,14 +134,14 @@ function App() {
 
         // 🖼️ Sync Avatar from Firestore
         try {
-           const userSnap = await getDoc(doc(db, "users", currentUser.uid));
-           if (userSnap.exists()) {
-             const data = userSnap.data();
-             if (data.profileImage) {
-               setProfileImage(data.profileImage);
-               localStorage.setItem("profileImage", data.profileImage);
-             }
-           }
+          const userSnap = await getDoc(doc(db, "users", currentUser.uid));
+          if (userSnap.exists()) {
+            const data = userSnap.data();
+            if (data.profileImage) {
+              setProfileImage(data.profileImage);
+              localStorage.setItem("profileImage", data.profileImage);
+            }
+          }
         } catch (e) {
           console.error("Cloud avatar sync failed:", e);
         }
@@ -189,17 +189,17 @@ function App() {
         id: doc.id,
         ...doc.data()
       }));
-      
+
       if (sessionMsgs.length > 0) {
         setMessages(sessionMsgs);
         setLocalGreeting(null);
       } else {
         // If this session is empty, get a fresh greeting!
         if (user && !isTyping && !greetedSessionsRef.current.has(currentSessionId)) {
-           greetedSessionsRef.current.add(currentSessionId);
-           fetchGreeting(user.displayName || user.email.split("@")[0]);
+          greetedSessionsRef.current.add(currentSessionId);
+          fetchGreeting(user.displayName || user.email.split("@")[0]);
         }
-        setMessages([]); 
+        setMessages([]);
       }
     });
 
@@ -249,17 +249,17 @@ function App() {
       const sessionsQ = query(collection(db, "users", user.uid, "sessions"));
       const sessionsSnapshot = await getDocs(sessionsQ);
       const batch = writeBatch(db);
-      
+
       for (const sessionDoc of sessionsSnapshot.docs) {
         // Delete messages subcollection for this session
         const msgsQ = query(collection(db, "users", user.uid, "sessions", sessionDoc.id, "messages"));
         const msgsSnapshot = await getDocs(msgsQ);
         msgsSnapshot.docs.forEach(m => batch.delete(m.ref));
-        
+
         // Delete the session document
         batch.delete(sessionDoc.ref);
       }
-      
+
       await batch.commit();
       setMessages([]);
       greetedSessionsRef.current.clear();
@@ -282,7 +282,7 @@ function App() {
     if (!trimmed) return;
 
     setInput("");
-    
+
     // Save user message to Firestore
     const userMsg = { text: trimmed, sender: "user" };
     await saveMessageToFirestore(userMsg);
@@ -344,7 +344,7 @@ function App() {
       setIsTyping(false);
 
       if (currentMode === "image") {
-          let botMsg;
+        let botMsg;
         if (data.error) {
           botMsg = { text: `Error: ${data.error}`, sender: "bot" };
         } else {
@@ -425,17 +425,17 @@ function App() {
       />
 
       {showProfileModal && (
-        <ProfileModal 
-          setShowProfileModal={setShowProfileModal} 
-          name={displayName} 
-          setName={() => {}} // Disabled for now, as it's linked to Firebase
+        <ProfileModal
+          setShowProfileModal={setShowProfileModal}
+          name={displayName}
+          setName={() => { }} // Disabled for now, as it's linked to Firebase
           profileImage={profileImage}
           setProfileImage={setProfileImage}
         />
       )}
 
       {showSettingsModal && (
-        <SettingsModal 
+        <SettingsModal
           setShowSettingsModal={setShowSettingsModal}
           isLightMode={isLightMode}
           setIsLightMode={setIsLightMode}
@@ -443,7 +443,7 @@ function App() {
       )}
 
       {showHistoryModal && (
-        <SessionHistory 
+        <SessionHistory
           user={user}
           currentSessionId={currentSessionId}
           onSelectSession={loadSession}
@@ -460,12 +460,12 @@ function App() {
       )}
 
       {showLogoutModal && (
-        <LogoutModal 
-          setShowLogoutModal={setShowLogoutModal} 
-          messages={messages} 
-          modalType={modalType} 
+        <LogoutModal
+          setShowLogoutModal={setShowLogoutModal}
+          messages={messages}
+          modalType={modalType}
           onClearChat={clearChat}
-          onLogout={() => signOut(auth)} 
+          onLogout={() => signOut(auth)}
         />
       )}
     </div>
