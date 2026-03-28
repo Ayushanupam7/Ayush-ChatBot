@@ -18,6 +18,27 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState("list"); // "list" or "preview" for mobile
 
+  // Handle mobile swipe-back (hardware back button) to close modal
+  useEffect(() => {
+    // Push a dummy state so the browser has something to "go back" from
+    window.history.pushState({ modalOpen: true }, "");
+
+    const handlePopState = () => {
+      // User triggered a swipe-back or hardware back button
+      onClose(); 
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      // If closed manually (via 'X' or overlay), gracefully remove the dummy state
+      if (window.history.state?.modalOpen) {
+        window.history.back();
+      }
+    };
+  }, [onClose]);
+
   // 1. Fetch ALL sessions
   useEffect(() => {
     const fetchSessions = async () => {
