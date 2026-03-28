@@ -1257,26 +1257,41 @@ body {
 /* Close Button */
 .modal-close-btn {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
+  top: 14px;
+  right: 14px;
+
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.05);
+
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+
   color: #94a3b8;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 600;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s ease;
   z-index: 10;
 }
 
+/* Hover */
 .modal-close-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
+  /* 🔥 fixed (red for close action) */
+  transform: rotate(90deg) scale(1.05);
+}
+
+/* Active click */
+.modal-close-btn:active {
+  transform: scale(0.9);
 }
 
 /* ── Light Mode History Fixes ── */

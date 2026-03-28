@@ -117,7 +117,10 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
   return (
     <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal-content history-browser-modal">
-        <button className="modal-close-btn" onClick={onClose}>×</button>
+        <button className="modal-close-btn history-close-btn" onClick={onClose}>
+          <span className="desktop-close">×</span>
+          <span className="mobile-close">Close</span>
+        </button>
 
         <div className="history-browser-container">
           {/* Sidebar */}
@@ -208,7 +211,7 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
                     </div>
                   ))}
                 </div>
-                
+
                 <div className="preview-footer">
                   <button className="restore-session-btn" onClick={() => onSelectSession(selectedSessionId)}>
                     {selectedSessionId === currentSessionId ? "Continue Chat" : "Restore"}
