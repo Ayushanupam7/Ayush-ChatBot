@@ -448,6 +448,11 @@ function App() {
           currentSessionId={currentSessionId}
           onSelectSession={loadSession}
           onClearAll={clearChat}
+          onDeleteSession={(deletedId) => {
+            if (deletedId === currentSessionId) {
+              createNewSession();
+            }
+          }}
           onClose={() => setShowHistoryModal(false)}
         />
       )}

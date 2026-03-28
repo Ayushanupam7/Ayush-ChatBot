@@ -246,6 +246,7 @@
   flex-direction: column;
   background: #0f0f13;
 }
+
 .preview-container {
   display: flex;
   flex-direction: column;
@@ -297,6 +298,25 @@
 .restore-session-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+}
+
+.delete-session-btn {
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 12px 28px;
+  border-radius: 12px;
+  margin-left: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-session-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  transform: translateY(-2px);
+  border-color: #ef4444;
 }
 
 /* Messages */
@@ -504,6 +524,17 @@
 
 .light-mode .preview-footer {
   border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.light-mode .delete-session-btn {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.light-mode .delete-session-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
 }
 
 .light-mode .bubble.bot {

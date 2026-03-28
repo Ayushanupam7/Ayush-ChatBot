@@ -10,13 +10,45 @@ import {
   doc
 } from "firebase/firestore";
 
-const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, onClose }) => {
+const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, onDeleteSession, onClose }) => {
   const [sessions, setSessions] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSessionId, setSelectedSessionId] = useState(null);
   const [previewMessages, setPreviewMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState("list"); // "list" or "preview" for mobile
+
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchEndX, setTouchEndX] = useState(null);
+  const [touchStartY, setTouchStartY] = useState(null);
+  const [touchEndY, setTouchEndY] = useState(null);
+
+  const handleTouchStart = (e) => {
+    setTouchEndX(null);
+    setTouchEndY(null);
+    setTouchStartX(e.targetTouches[0].clientX);
+    setTouchStartY(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEndX(e.targetTouches[0].clientX);
+    setTouchEndY(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX || !touchEndX || !touchStartY || !touchEndY) return;
+    const distanceX = touchStartX - touchEndX;
+    const distanceY = touchStartY - touchEndY;
+
+    // Ensure horizontal swipe is dominant and moved at least 60px right
+    if (Math.abs(distanceX) > Math.abs(distanceY) && distanceX < -60) {
+      if (viewMode === "preview") {
+        setViewMode("list");
+      } else {
+        onClose();
+      }
+    }
+  };
 
   // 1. Fetch ALL sessions
   useEffect(() => {
@@ -73,7 +105,6 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
 
   const handleDeleteSession = async (e, sessionId) => {
     e.stopPropagation();
-    if (!window.confirm("Delete this conversation?")) return;
 
     try {
       const msgsQ = query(collection(db, "users", user.uid, "sessions", sessionId, "messages"));
@@ -88,6 +119,9 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
         setSelectedSessionId(null);
         setPreviewMessages([]);
         setViewMode("list");
+      }
+      if (onDeleteSession) {
+        onDeleteSession(sessionId);
       }
     } catch (e) {
       console.error("Error deleting session:", e);
@@ -116,7 +150,12 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
 
   return (
     <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="modal-content history-browser-modal">
+      <div
+        className="modal-content history-browser-modal"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         <button className="modal-close-btn history-close-btn" onClick={onClose}>
           <span className="desktop-close">×</span>
           <span className="mobile-close">Close</span>
@@ -216,14 +255,18 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
                   <button className="restore-session-btn" onClick={() => onSelectSession(selectedSessionId)}>
                     {selectedSessionId === currentSessionId ? "Continue Chat" : "Restore"}
                   </button>
+                  <button
+                    className="delete-session-btn"
+                    onClick={(e) => handleDeleteSession(e, selectedSessionId)}
+                  >
+                    Delete
+                  </button>
                 </div>
 
               </div>
             ) : (
               <div className="empty-preview-state">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
+
                 <p>Select a conversation from the list to see the full chat history</p>
               </div>
             )}
