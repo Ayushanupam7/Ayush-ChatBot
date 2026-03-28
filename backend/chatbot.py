@@ -56,9 +56,9 @@ if GROQ_API_KEY:
     try:
         from groq import Groq # type: ignore
         groq_client: Any = Groq(api_key=GROQ_API_KEY)
-        print("✅ Groq ready")
+        print("[OK] Groq ready")
     except Exception as e:
-        print(f"❌ Groq: {e}")
+        print(f"[ERROR] Groq: {e}")
 
 # 2. OpenAI
 openai_client: Any = None
@@ -66,9 +66,9 @@ if OPENAI_API_KEY:
     try:
         from openai import OpenAI # type: ignore
         openai_client: Any = OpenAI(api_key=OPENAI_API_KEY)
-        print("✅ OpenAI ready")
+        print("[OK] OpenAI ready")
     except Exception as e:
-        print(f"❌ OpenAI: {e}")
+        print(f"[ERROR] OpenAI: {e}")
 
 # 3. Gemini (new SDK)
 gemini_client: Any = None
@@ -76,9 +76,9 @@ if GEMINI_API_KEY:
     try:
         from google import genai # type: ignore
         gemini_client: Any = genai.Client(api_key=GEMINI_API_KEY)
-        print("✅ Gemini ready")
+        print("[OK] Gemini ready")
     except Exception as e:
-        print(f"❌ Gemini: {e}")
+        print(f"[ERROR] Gemini: {e}")
 
 # 4. OpenRouter (uses OpenAI-compatible API)
 openrouter_client: Any = None
@@ -89,9 +89,9 @@ if OPENROUTER_API_KEY:
             api_key=OPENROUTER_API_KEY,
             base_url="https://openrouter.ai/api/v1",
         )
-        print("✅ OpenRouter ready")
+        print("[OK] OpenRouter ready")
     except Exception as e:
-        print(f"❌ OpenRouter: {e}")
+        print(f"[ERROR] OpenRouter: {e}")
 
 # ─────────────────────────────────────────
 # 📚 Dictionary responses (always checked first)
