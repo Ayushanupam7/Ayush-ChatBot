@@ -191,9 +191,6 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
                       </>
                     )}
                   </div>
-                  <button className="restore-session-btn" onClick={() => onSelectSession(selectedSessionId)}>
-                    {selectedSessionId === currentSessionId ? "Continue Chat" : "Restore"}
-                  </button>
                 </div>
 
                 <div className="preview-messages-list">
@@ -211,6 +208,13 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
                     </div>
                   ))}
                 </div>
+                
+                <div className="preview-footer">
+                  <button className="restore-session-btn" onClick={() => onSelectSession(selectedSessionId)}>
+                    {selectedSessionId === currentSessionId ? "Continue Chat" : "Restore"}
+                  </button>
+                </div>
+
               </div>
             ) : (
               <div className="empty-preview-state">
