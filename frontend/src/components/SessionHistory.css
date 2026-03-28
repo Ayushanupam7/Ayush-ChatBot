@@ -561,3 +561,31 @@
 .light-mode .back-to-list-btn:hover {
   background: #f1f5f9;
 }
+
+/* ───────────── ANIMATIONS ───────────── */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes fadeOutAnim {
+  from { opacity: 1; border-radius: 0; }
+  to { opacity: 0; border-radius: 0; }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.slide-out-right {
+  animation: slideOutRight 0.25s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+}
+
+.fade-out {
+  animation: fadeOutAnim 0.25s ease forwards !important;
+}

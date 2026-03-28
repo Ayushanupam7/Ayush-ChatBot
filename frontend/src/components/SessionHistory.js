@@ -17,6 +17,15 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
   const [previewMessages, setPreviewMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState("list"); // "list" or "preview" for mobile
+  const [isClosing, setIsClosing] = useState(false);
+
+  // Custom close function for smooth animation
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 250);
+  };
 
   const [touchStartX, setTouchStartX] = useState(null);
   const [touchEndX, setTouchEndX] = useState(null);
@@ -42,11 +51,7 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
 
     // Ensure horizontal swipe is dominant and moved at least 60px right
     if (Math.abs(distanceX) > Math.abs(distanceY) && distanceX < -60) {
-      if (viewMode === "preview") {
-        setViewMode("list");
-      } else {
-        onClose();
-      }
+      handleClose();
     }
   };
 
@@ -149,14 +154,14 @@ const SessionHistory = ({ user, currentSessionId, onSelectSession, onClearAll, o
   };
 
   return (
-    <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div
-        className="modal-content history-browser-modal"
+    <div className={`modal-overlay ${isClosing ? 'fade-out' : ''}`} onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}>
+      <div 
+        className={`modal-content history-browser-modal ${isClosing ? 'slide-out-right' : 'slide-in-right'}`}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <button className="modal-close-btn history-close-btn" onClick={onClose}>
+        <button className="modal-close-btn history-close-btn" onClick={handleClose}>
           <span className="desktop-close">×</span>
           <span className="mobile-close">Close</span>
         </button>
