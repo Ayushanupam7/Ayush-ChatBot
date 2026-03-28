@@ -168,7 +168,7 @@ function App() {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [showToast]);
 
   const [showTour, setShowTour] = useState(false);
 
