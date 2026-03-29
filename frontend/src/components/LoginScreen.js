@@ -163,7 +163,7 @@ const LoginScreen = ({ onLoginSuccess }) => {
           </span>
         </p>
 
-        <div className="name-footer">v1.1 • by Ayush Anupam</div>
+        <div className="name-footer">V1.1.0 • by Ayush Anupam</div>
       </div>
     </div>
   );
