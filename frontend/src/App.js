@@ -29,7 +29,7 @@ import SettingsModal from "./components/SettingsModal";
 import SessionHistory from "./components/SessionHistory";
 import OnboardingTour from "./components/OnboardingTour";
 
-const API = process.env.REACT_APP_API_URL || "https://ayush-chatbot-3.onrender.com";
+const API = process.env.REACT_APP_API_URL || "https://ayush-chatbot-3.onrender.com/api";
 
 function App() {
   const [user, setUser] = useState(null);
