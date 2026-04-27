@@ -341,6 +341,13 @@ function App() {
 
       const isAutoImage = detectedMode === "image" || lowerInput.startsWith("generate-image") || lowerInput.startsWith("create image") || lowerInput.startsWith("generate image");
       const currentMode = isAutoImage ? "image" : detectedMode;
+      
+      console.log("DEBUG: Sending to API:", `${API}/${currentMode === 'image' ? 'generate-image' : 'chat'}`);
+      console.log("DEBUG: Body:", {
+        message: promptToProcess,
+        mode: detectedMode,
+        history: history
+      });
 
       let res;
       if (currentMode === "image") {

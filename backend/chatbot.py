@@ -247,19 +247,26 @@ class ImageInput(BaseModel):
     prompt: str
 
 @app.post("/api/generate-image")
-def generate_image(input_data: ImageInput):
-    if not input_data.prompt.strip():
+async def generate_image(request: Dict[Any, Any]):
+    print(f"DEBUG: Image Body: {request}")
+    prompt = request.get("prompt", "")
+    if not prompt.strip():
         return {"error": "Prompt cannot be empty! 😊"}
     
-    result = generate_kling_image(input_data.prompt)
+    result = generate_kling_image(prompt)
     return result
 
 @app.post("/api/chat")
-def chat(user: UserInput):
-    if not user.message.strip():
+async def chat(request: Dict[Any, Any]):
+    print(f"DEBUG: Chat Body: {request}")
+    message = request.get("message", "")
+    mode = request.get("mode", "short")
+    history = request.get("history", [])
+    
+    if not message.strip():
         return {"response": "Please type a message! 😊", "provider": "System"}
-    hs: List[Dict[str, str]] = user.history or []
-    ans, prov = getResponseBot(user.message, user.mode, hs)
+    
+    ans, prov = getResponseBot(message, mode, history)
     return {"response": ans, "provider": prov}
 
 
