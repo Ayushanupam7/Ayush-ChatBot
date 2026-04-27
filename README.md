@@ -47,6 +47,8 @@ OPENAI_API_KEY=your_key_here (optional)
 Run the server:
 ```bash
 python -m uvicorn chatbot:app --reload
+uvicorn chatbot:app --reload
+
 ```
 
 ### 3. Frontend Setup

@@ -194,6 +194,7 @@ def getResponseBot(userQuestion: str, mode: str, history: List[Dict[str, str]], 
         if re.search(rf'\b{re.escape(key)}\b', remaining_question):
             dictionary_matches.append(responses[key])
             matched_keys.append(key)
+            print(f"DEBUG: Dictionary Match: {key}")
             # Remove the matched keyword to see what's left for the AI
             remaining_question = str(re.sub(rf'\b{re.escape(key)}\b', '', remaining_question)).strip()
 

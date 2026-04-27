@@ -29,7 +29,7 @@ import SettingsModal from "./components/SettingsModal";
 import SessionHistory from "./components/SessionHistory";
 import OnboardingTour from "./components/OnboardingTour";
 
-const API = process.env.REACT_APP_API_URL || "https://ayush-chatbot-2.onrender.com/api";
+const API = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -211,7 +211,8 @@ function App() {
         setLocalGreeting(null);
       } else {
         // If this session is empty, get a fresh greeting!
-        if (user && !isTyping && !greetedSessionsRef.current.has(currentSessionId)) {
+        // Using a check to avoid re-triggering during typing
+        if (user && !greetedSessionsRef.current.has(currentSessionId)) {
           greetedSessionsRef.current.add(currentSessionId);
           fetchGreeting(user.displayName || user.email.split("@")[0]);
         }
@@ -220,7 +221,7 @@ function App() {
     });
 
     return () => unsubscribe();
-  }, [user, fetchGreeting, currentSessionId, isTyping]);
+  }, [user, fetchGreeting, currentSessionId]); // Removed isTyping to prevent listener resets
 
   const createNewSession = useCallback(() => {
     const newId = `session_${Date.now()}`;
@@ -299,9 +300,17 @@ function App() {
 
     setInput("");
 
+    // 🚀 Optimistic Update: Show user message immediately
+    const userMsg = {
+      text: trimmed,
+      sender: "user",
+      id: `temp_${Date.now()}`,
+      timestamp: { seconds: Date.now() / 1000 } // Local approximation
+    };
+    setMessages(prev => [...prev, userMsg]);
+
     // Save user message to Firestore
-    const userMsg = { text: trimmed, sender: "user" };
-    await saveMessageToFirestore(userMsg);
+    await saveMessageToFirestore({ text: trimmed, sender: "user" });
 
     setIsTyping(true);
     try {
