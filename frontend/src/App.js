@@ -366,23 +366,24 @@ function App() {
       }
 
       const data = await res.json();
-      setIsTyping(false);
 
       if (currentMode === "image") {
         let botMsg;
         if (data.error) {
-          botMsg = { text: `Error: ${data.error}`, sender: "bot" };
+          botMsg = { text: `Error: ${data.error}`, sender: "bot", id: `err_${Date.now()}` };
         } else {
           let imageUrl = data.images?.[0]?.url || data.url;
           if (imageUrl && imageUrl.startsWith("/")) {
             imageUrl = `${API}${imageUrl}`;
           }
           if (imageUrl) {
-            botMsg = { text: "Here is your generated image: ", image: imageUrl, sender: "bot" };
+            botMsg = { text: "Here is your generated image: ", image: imageUrl, sender: "bot", id: `img_${Date.now()}` };
           } else {
-            botMsg = { text: "Failed to generate image. 😕", sender: "bot" };
+            botMsg = { text: "Failed to generate image. 😕", sender: "bot", id: `err_${Date.now()}` };
           }
         }
+        setMessages(prev => [...prev, botMsg]);
+        setIsTyping(false);
         await saveMessageToFirestore(botMsg);
         return;
       }
@@ -394,12 +395,26 @@ function App() {
           setActiveProvider(`${data.provider} is Online`);
         }
       }
-      const botMsg = { text: data.response, image: data.image, sender: "bot" };
-      await saveMessageToFirestore(botMsg);
-    } catch {
+
+      const botMsg = { 
+        text: data.response, 
+        image: data.image, 
+        sender: "bot", 
+        id: `bot_${Date.now()}`,
+        timestamp: { seconds: Date.now() / 1000 } 
+      };
+
+      // 🚀 SHOW MESSAGE IMMEDIATELY (Fixes the "stuck on dots" issue)
+      setMessages(prev => [...prev, botMsg]);
       setIsTyping(false);
-      const botMsg = { text: "Server error ❌ Is FastAPI running?", sender: "bot" };
-      // Don't save server errors to Firestore
+      
+      // Save in background
+      saveMessageToFirestore(botMsg).catch(err => console.error("Firestore save failed:", err));
+
+    } catch (error) {
+      console.error("Chat error:", error);
+      setIsTyping(false);
+      const botMsg = { text: "Error connecting to AI. Please try again. ❌", sender: "bot", id: `err_${Date.now()}` };
       setMessages(prev => [...prev, botMsg]);
     }
   };
