@@ -3,7 +3,7 @@ import { auth, db } from "../firebase_config";
 import { updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 
-const ProfileModal = ({ setShowProfileModal, name, setName, profileImage, setProfileImage }) => {
+const ProfileModal = ({ setShowProfileModal, name, setName, email, profileImage, setProfileImage }) => {
   const [tempName, setTempName] = useState(name);
   const [tempImage, setTempImage] = useState(profileImage);
   const fileInputRef = useRef(null);
@@ -113,6 +113,16 @@ const ProfileModal = ({ setShowProfileModal, name, setName, profileImage, setPro
           </div>
 
           <div className="input-group" style={{marginTop: '24px', width: '100%', textAlign: 'left'}}>
+            <label style={{display: 'block', marginBottom: '8px', color: '#a0aec0', fontSize: '13px', fontWeight: 500, fontFamily: '"DM Sans", sans-serif'}}>Email Address</label>
+            <input
+              type="text"
+              value={email}
+              readOnly
+              disabled
+              className="name-input"
+              style={{width: '100%', marginBottom: '16px', opacity: 0.7, cursor: 'not-allowed', background: 'rgba(255,255,255,0.05)'}}
+            />
+
             <label style={{display: 'block', marginBottom: '8px', color: '#a0aec0', fontSize: '13px', fontWeight: 500, fontFamily: '"DM Sans", sans-serif'}}>Display Name</label>
             <input
               type="text"

@@ -475,6 +475,7 @@ function App() {
         <ProfileModal
           setShowProfileModal={setShowProfileModal}
           name={displayName}
+          email={user?.email}
           setName={() => { }} // Disabled for now, as it's linked to Firebase
           profileImage={profileImage}
           setProfileImage={setProfileImage}
