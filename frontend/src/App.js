@@ -29,7 +29,7 @@ import SettingsModal from "./components/SettingsModal";
 import SessionHistory from "./components/SessionHistory";
 import OnboardingTour from "./components/OnboardingTour";
 
-const API = process.env.REACT_APP_API_URL || "https://ayush-chatbot-ta9u.onrender.com";
+const API = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -403,18 +403,18 @@ function App() {
         }
       }
 
-      const botMsg = { 
-        text: data.response || "No response received. 😕", 
-        image: data.image, 
-        sender: "bot", 
+      const botMsg = {
+        text: data.response || "No response received. 😕",
+        image: data.image,
+        sender: "bot",
         id: `bot_${Date.now()}`,
-        timestamp: { seconds: Date.now() / 1000 } 
+        timestamp: { seconds: Date.now() / 1000 }
       };
 
       // 🚀 SHOW MESSAGE IMMEDIATELY (Fixes the "stuck on dots" issue)
       setMessages(prev => [...prev, botMsg]);
       setIsTyping(false);
-      
+
       // Save in background
       saveMessageToFirestore(botMsg).catch(err => console.error("Firestore save failed:", err));
 
