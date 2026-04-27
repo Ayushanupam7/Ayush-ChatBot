@@ -46,7 +46,7 @@ OPENAI_API_KEY      = os.getenv("OPENAI_API_KEY")
 GEMINI_API_KEY      = os.getenv("GEMINI_API_KEY")
 OPENROUTER_API_KEY  = os.getenv("OPENROUTER_API_KEY")
 GROQ_API_KEY        = os.getenv("GROQ_API_KEY")
-NEWSDATA_API_KEY    = "pub_0c7682d30adf4afea9f84f47fc9bbd51"
+NEWSDATA_API_KEY    = os.getenv("NEWSDATA_API_KEY")
 
 # ─────────────────────────────────────────
 # 📰 News Fetcher
