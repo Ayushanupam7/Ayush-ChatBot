@@ -143,7 +143,7 @@ def ask_gemini(question: str, system_prompt: str, history: List[Dict[str, str]])
     for attempt in range(2):
         try:
             result = gemini_client.models.generate_content( # type: ignore
-                model="gemini-2.5-flash", 
+                model="gemini-2.0-flash", 
                 contents=contents,
             )
             return result.text.strip()
