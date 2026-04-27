@@ -104,15 +104,20 @@ function App() {
   }, [user, currentSessionId]);
 
   const fetchGreeting = useCallback((userName) => {
-    fetch(`${API}/greet?name=${encodeURIComponent(userName)}`)
-      .then(r => r.json())
-      .then(d => {
-        // Display locally instead of saving to Firestore
-        setLocalGreeting({ text: d.response, sender: "bot", id: "local-greet" });
-      })
-      .catch(() => {
-        setLocalGreeting({ text: "Hello! 👋 How can I help?", sender: "bot", id: "local-greet" });
-      });
+    const hour = new Date().getHours();
+    let g = "";
+    if (hour >= 5 && hour < 12) {
+      g = "Good Morning";
+    } else if (hour >= 12 && hour < 17) {
+      g = "Good Afternoon";
+    } else if (hour >= 17 && hour < 21) {
+      g = "Good Evening";
+    } else {
+      g = "Good Night";
+    }
+    
+    const greetingText = `${g}, ${userName}! 👋 How can I help you today?`;
+    setLocalGreeting({ text: greetingText, sender: "bot", id: "local-greet" });
   }, []);
 
   // 1. Auth Listener
