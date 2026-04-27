@@ -4,6 +4,7 @@ from pydantic import BaseModel # type: ignore
 from typing import List, Dict, Optional, Any
 from fastapi.middleware.cors import CORSMiddleware # type: ignore
 import datetime
+import requests
 import sys
 import os
 import re
@@ -45,6 +46,36 @@ OPENAI_API_KEY      = os.getenv("OPENAI_API_KEY")
 GEMINI_API_KEY      = os.getenv("GEMINI_API_KEY")
 OPENROUTER_API_KEY  = os.getenv("OPENROUTER_API_KEY")
 GROQ_API_KEY        = os.getenv("GROQ_API_KEY")
+NEWSDATA_API_KEY    = "pub_0c7682d30adf4afea9f84f47fc9bbd51"
+
+# ─────────────────────────────────────────
+# 📰 News Fetcher
+# ─────────────────────────────────────────
+
+def fetch_latest_news(query: Optional[str] = None) -> str:
+    url = f"https://newsdata.io/api/1/latest?apikey={NEWSDATA_API_KEY}"
+    if query:
+        # Clean query: remove "news" and "about"
+        clean_query = query.lower().replace("news", "").replace("about", "").replace("latest", "").strip()
+        if clean_query:
+            url += f"&q={clean_query}"
+    
+    try:
+        response = requests.get(url, timeout=10)
+        data = response.json()
+        if data.get("status") == "success" and data.get("results"):
+            articles = data["results"][:5] # Top 5
+            news_output = "Here are the latest news updates:\n\n"
+            for i, art in enumerate(articles, 1):
+                title = art.get("title", "No Title")
+                link = art.get("link", "#")
+                source = art.get("source_id", "Unknown source")
+                news_output += f"{i}. **{title}**\n   Source: {source} | [Read Full Story]({link})\n\n"
+            return news_output
+        return "I couldn't find any recent news matching that topic. 😕"
+    except Exception as e:
+        print(f"DEBUG: News API Error: {e}")
+        return "I had trouble reaching the news server. Please try again later. ❌"
 
 # ─────────────────────────────────────────
 # ✅ Initialize all available clients
@@ -178,6 +209,25 @@ AI_PROVIDERS = [
 
 def getResponseBot(userQuestion: str, mode: str, history: List[Dict[str, str]], image: Optional[str] = None) -> tuple:
     userQuestionLower: str = userQuestion.lower().strip()
+
+    # 📰 News Detection Logic
+    news_triggers = [r'\bnews\b', r'\bheadlines\b', r'\bwhat\'s happening\b', r'\bcurrent events\b']
+    if any(re.search(trigger, userQuestionLower) for trigger in news_triggers):
+        # Try to extract a specific topic
+        topic = None
+        # Pattern 1: news about [topic]
+        match = re.search(r'(?:news|headlines|updates)\s+(?:about|on|for|regarding)\s+(.+)', userQuestionLower)
+        if match:
+            topic = match.group(1).strip()
+        else:
+            # Pattern 2: [topic] news
+            for trigger in news_triggers:
+                temp = re.sub(trigger, '', userQuestionLower).replace('latest', '').strip()
+                if temp and len(temp) > 2:
+                    topic = temp
+                    break
+        
+        return fetch_latest_news(topic), "NewsData.io"
 
     # 1. Dictionary Matching
     dictionary_matches = []
