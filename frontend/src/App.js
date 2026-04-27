@@ -314,10 +314,12 @@ function App() {
 
     setIsTyping(true);
     try {
-      const history = messages.slice(-10).map(m => ({
-        role: m.sender === "user" ? "user" : "assistant",
-        content: m.text
-      }));
+      const history = messages.slice(-10)
+        .filter(m => m.text || m.image)
+        .map(m => ({
+          role: m.sender === "user" ? "user" : "assistant",
+          content: m.text || "[Image]"
+        }));
 
       let detectedMode = mode;
       let promptToProcess = trimmed;
@@ -365,7 +367,12 @@ function App() {
         });
       }
 
+      if (!res.ok) {
+        throw new Error(`Server returned ${res.status}: ${res.statusText}`);
+      }
+
       const data = await res.json();
+      console.log("API Response:", data);
 
       if (currentMode === "image") {
         let botMsg;
@@ -397,7 +404,7 @@ function App() {
       }
 
       const botMsg = { 
-        text: data.response, 
+        text: data.response || "No response received. 😕", 
         image: data.image, 
         sender: "bot", 
         id: `bot_${Date.now()}`,
